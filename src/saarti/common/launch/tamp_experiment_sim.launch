@@ -1,0 +1,57 @@
+<!-- Run single experiment. Takes exp config file as argument-->
+
+<launch>
+
+    <!-- load rosparams --> 
+    <arg name="exp_config" default="asta_reduced_mu_turn_config.yaml"/> 
+    <rosparam command="load" file="$(find common)/config/exp_config/$(arg exp_config)" />
+    
+    <!-- experiment manager node -->
+    <node pkg="common" type="exp_manager.py" name="experiment_manager"  required="true" output="screen"> </node>
+
+    <!-- gazebo pauser node -->
+    <node pkg="common" type="gazebo_pauser.py" name="gazebo_pauser"  required="true" output="screen"> </node>
+
+    <!-- road percept, planning & ctrl nodes -->
+    <node pkg="perception" type="road_perception.py" name="road_perception"> </node>
+    <rosparam command="load" file="$(find saarti)/config/planning_and_ctrl_config.yaml" /> 
+    <node pkg="saarti" type="saarti_node" name="saarti_node"/> 
+    <node pkg="saarti" type="ctrl_interface.py" name="ctrl_interface"/> 
+
+    <!-- logging -->
+    <arg name="record_rosbag" default="true" />
+    <node pkg="rosbag" name="rosbag_record_exp" type="record" if="$(arg record_rosbag )" output="screen"    
+		args="record -O  $(find tamp_logs)/bagfiles/sim_exp/latest --duration=20m
+			/pathglobal
+			/pathglobal_vis
+			/dlbglobal_vis
+			/dubglobal_vis
+			/origin_pose_utm
+			/tf
+			/tf_static
+			/state_cart
+			/state
+			/pathlocal
+			/pathlocal_vis
+			/ctrl_mode
+			/vxref
+			/mu_gt
+			/state_text_marker
+			/obs
+			/obs_det_vis
+			/obs_undet_vis
+			/trajset_vis
+			/posconstr_vis
+			/trajhat
+			/trajhat_vis
+			/trajstar
+			/trajstar_vis
+			/trajstar_polarr_vis
+			/saarti_status
+			/lhpt_vis
+			/fssim/base_pose_ground_truth
+			/fssim/car_info
+			/fssim/cmd"> 
+    </node>    
+</launch>
+

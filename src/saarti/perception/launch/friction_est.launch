@@ -1,0 +1,11 @@
+<!-- starts friction est node with live plot gui -->
+
+<launch>
+
+     <!-- params -->
+     <rosparam command="load" file="$(find perception)/config/friction_est_config.yaml" />
+
+     <!-- start node -->
+     <node pkg="perception" type="friction_est.py" name="friction_est" output="screen"> </node>
+
+</launch>

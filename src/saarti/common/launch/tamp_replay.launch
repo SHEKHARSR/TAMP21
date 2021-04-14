@@ -1,0 +1,105 @@
+<!-- plays rosbag (specified in arg) and launches rviz --> 
+<launch>
+    <!-- simtime -->
+    <param name="use_sim_time" value="true" /> 
+    
+    <!-- args -->
+    <arg name="robot_name" default="rhino" />
+    <arg name="urdf_model" default="$(find common)/config/vehicles/$(arg robot_name)/urdf/car.urdf" />
+    <arg name="system_setup" default="rhino_real" />
+    <arg name="track_name" default="asta_zero_short" />    
+    
+    <!-- params -->
+    <param name="robot_name" type="string" value="$(arg robot_name)" />
+    <param name="system_setup" type="string" value="$(arg system_setup)" />
+    <param name="track_name" type="string" value="$(arg track_name)" />
+    <rosparam command="load" file="$(find common)/config/vehicles/$(arg robot_name)/config/car.yaml" />
+
+    <!-- align camera and map (static or dynamic remap) -->
+    <node pkg="tamp_logs" type="cam_tf_remap_node.py" name="cam_tf_remap_node"/> 
+    <node pkg="tf" type="static_transform_publisher" name="map_broadcaster" args="0 0 0 0 0 0 1 map tamp_map 100" />
+    <!-- <node pkg="tf" type="static_transform_publisher" name="cam__broadcaster" args="0.2 0 0 -0.04997917 0 0 0.99875026 cam cam_ 100" />     -->
+
+    <!-- play bag gauntlet without obs -->
+    <!-- <arg name="bag" default="real_exp/astazero-2020-05-12/drone_runs/selected_runs_gauntlet_no_obs/asta_2020-05-12-14-44-53.bag" /> -->
+    <!-- <arg name="bag" default="real_exp/astazero-2020-05-12/drone_runs/selected_runs_gauntlet_no_obs/asta_2020-05-12-14-49-58.bag" /> -->
+
+    <!-- play bag reduced mu turn -->
+    <!-- <arg name="bag" default="real_exp/astazero-2020-04-30/auto_saarti/asta_2020-04-30-15-59-53_cam_.bag" /> -->
+    <!-- <arg name="bag" default="real_exp/astazero-2020-04-30/auto_saarti/asta_2020-04-30-15-06-06.bag" /> -->
+
+    <!-- play bag local min -->
+    <!-- <arg name="bag" default="real_exp/astazero-2020-05-12/coll_avoid_local_min/selected_runs_local_min/asta_2020-05-12-14-02-25.bag" /> -->
+    <!-- <arg name="bag" default="real_exp/astazero-2020-05-12/coll_avoid_local_min/selected_runs_local_min/asta_2020-05-12-14-05-43.bag" /> -->
+
+    <!-- play bag gauntlet with obs -->
+    <!-- <arg name="bag" default="real_exp/astazero-2020-05-12/drone_runs/selected_runs_gauntlet_local_min/asta_2020-05-12-16-18-51.bag" />  saarti -->
+    <!-- <arg name="bag" default="real_exp/astazero-2020-05-12/drone_runs/selected_runs_gauntlet_local_min/asta_2020-05-12-16-22-27.bag" />  rti -->
+
+    <!-- test 25 may -->
+    <!-- <arg name="bag" default="real_exp/astazero-2020-05-25/drone_runs/asta_2020-05-25-16-50-59.bag" /> -->
+
+    <!-- test 26 may -->
+    
+
+    <!-- test 8th june -->
+    <!-- <arg name="bag" default="real_exp/astazero-2020-06-08/gauntlet/obs/selected/asta_2020-06-08-15-57-51_adapt_cam_.bag" /> -->
+    <!--<arg name="bag" default="real_exp/astazero-2020-06-08/gauntlet/obs/selected/asta_2020-06-08-15-56-19_static_08_cam_.bag" /> -->
+    <!-- <arg name="bag" default="real_exp/astazero-2020-06-08/gauntlet/obs/selected/asta_2020-06-08-14-41-34_nonadapt_04_cam_.bag" /> -->
+
+    <!-- coll avoid test sh 12th june (sh_2020-06-12-11-50-35_nonadapt_cam_.bag, sh_2020-06-12-12-02-54_adapt_cam_.bag)   -->
+    <!-- <arg name="bag" default="real_exp/tamp_selected_runs/single_popup_wet/sh_2020-06-12-12-02-54_adapt_cam_.bag" /> -->
+
+    <!-- turn test sh 12th june (sh_2020-06-12-11-50-35_nonadapt_cam_.bag, sh_2020-06-12-12-02-54_adapt_cam_.bag)   -->
+    <arg name="bag" default="real_exp/tamp_selected_runs/reduced_mu_turn_sh/sh_2020-06-12-10-21-38_adapt_cam_.bag" />
+
+
+    <node pkg="rosbag" name="rosbag_player" type="play" args="--clock  $(find tamp_logs)/bagfiles/$(arg bag)">
+        <remap from="/OpenDLV/SensorMsgGPS_log" to="/OpenDLV/SensorMsgGPS"/>
+        <remap from="/OpenDLV/SensorMsgCAN_log" to="/OpenDLV/SensorMsgCAN"/>
+    </node> 
+
+    <!-- visualization -->
+    <param name="robot_description_simple" command="$(find xacro)/xacro --inorder $(arg urdf_model)" />
+    <node name="rviz_" pkg="rviz" type="rviz" args="-d $(find tamp_logs)/rviz/saarti_replay.rviz "/>
+
+    <?ignore
+    <!-- re-log for analysis -->
+    <arg name="record_rosbag" default="true" />
+    <node pkg="opendlv_ros" type="sens_msg_remap_node.py" name="sens_msg_remap"/>
+    <node pkg="rosbag" name="rosbag_record_exp" type="record" if="$(arg record_rosbag )" output="screen"    
+		args="record -O  $(find tamp_logs)/bagfiles/real_exp/astazero-2020-04-17/odlv_msgs_only/rere_latest --duration=5m
+			/pathglobal
+			/pathglobal_vis
+			/dlbglobal_vis
+			/dubglobal_vis
+			/origin_pose_utm
+			/tf
+			/tf_static
+			/state_cart
+			/state
+			/pathlocal
+			/pathlocal_vis
+			/ctrl_mode
+			/vxref
+			/state_text_marker
+			/obs
+			/obs_vis
+			/trajset_vis
+			/posconstr_vis
+			/trajhat
+			/trajhat_vis
+			/trajstar
+			/trajstar_vis
+			/trajstar_polarr_vis
+			/saarti_status
+			/lhpt_vis
+			/OpenDLV/SensorMsgGPS_log
+			/OpenDLV/SensorMsgCAN_log
+			/OpenDLV/ActuationRequest
+			/lars/ActuationRequest"> 
+    </node>
+    ?>
+
+</launch>
+

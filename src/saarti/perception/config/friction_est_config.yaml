@@ -1,0 +1,4 @@
+# friction_est
+N_buffer_fe: 100
+idx_lh: 3 
+mu_sigma_nominal: 0.1

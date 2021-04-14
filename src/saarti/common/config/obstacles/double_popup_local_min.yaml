@@ -1,0 +1,9 @@
+d_obs_at_popup:
+- 0.1
+- -1.5
+s_ego_at_popup:
+- 230.0
+- 230.0
+s_obs_at_popup:
+- 255.0
+- 270.0
