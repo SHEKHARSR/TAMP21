@@ -7,10 +7,19 @@ class PurePursuitController(object):
 
     k = 0.6  # look forward gain
     Lfc = 0.4  # look-ahead distance
-    K_p = 0.0  #TODO speed control propotional gain
-    K_i = 0.0  #TODO speed control integral gain
+    K_p = 1.0  #TODO speed control propotional gain
+    K_i = 0.2  #TODO speed control integral gain
     K_d = 0.0  #TODO speed control derivitive gain
     L = 0.324  # [m] wheel base of vehicle
+    sum_error = 0
+    error_total = 0
+    target_reach = False
+    P = 0 
+    I = 0
+    D = 0
+    self.last_time = 0.0 
+
+
 
     def __init__(self, vehicle_name=''):
         self.traj_x = []
@@ -44,12 +53,29 @@ class PurePursuitController(object):
     def compute_velocity(self, state):
         if self.is_finished:
             # stop moning if trajectory done
+            # Reset control parameters for PID control
+            self.P = 0.0
+            self.I = 0.0
+            self.D = 0.0
             return 0.0
         else:
             # speed control
-            #TODO
-            return self.target_velocity
+            error = self.target_velocity - state.v
+            # sum of error 
+            self.sum_error += error
+            # time derivative first order
+            get_time = rospy.get_time()
+            dt = get_time - state.last_time
+            self.last_time = state.time_stamp
+            if error*self.error_total < 0.0: # integral anti-windup
+                self.sum_error = 0
+            P = self.K_p*error
+            I = self.K_i*self.sum_error
+            D = self.K_d*(error-self.error_total)/dt
+            self.error_total = error
 
+            control_output = P + I + D 
+            return self.target_velocity + control_output
     def find_target(self, state):
         ind = self._calc_target_index(state)
         tx = self.traj_x[ind]
