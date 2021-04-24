@@ -86,8 +86,8 @@ def main():
         state = svea.wait_for_state()
 
         # compute control input via pure pursuit
-        steering, velocity = svea.compute_control()
-        svea.send_control(steering, velocity)
+        #steering, velocity = svea.compute_control()
+        #svea.send_control(steering, velocity)
 
         # visualize data
         if use_matplotlib or use_rviz:

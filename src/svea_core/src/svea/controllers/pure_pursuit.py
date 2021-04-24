@@ -2,6 +2,7 @@
 Adapted from Atsushi Sakai's PythonRobotics pure pursuit example
 """
 import math
+import rospy
 
 class PurePursuitController(object):
 
@@ -17,7 +18,7 @@ class PurePursuitController(object):
     P = 0 
     I = 0
     D = 0
-    self.last_time = 0.0 
+    
 
 
 
@@ -29,6 +30,7 @@ class PurePursuitController(object):
         self.target_velocity = 0.0
         self.last_index = 0
         self.is_finished = False
+        self.last_time = 0.0 
 
     def compute_control(self, state, target=None):
         steering = self.compute_steering(state, target)
@@ -65,7 +67,7 @@ class PurePursuitController(object):
             self.sum_error += error
             # time derivative first order
             get_time = rospy.get_time()
-            dt = get_time - state.last_time
+            dt = 0.01 #get_time - state.last_state_time
             self.last_time = state.time_stamp
             if error*self.error_total < 0.0: # integral anti-windup
                 self.sum_error = 0
