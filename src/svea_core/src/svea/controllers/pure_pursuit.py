@@ -111,7 +111,7 @@ class PurePursuitController(object):
             self.traj_y[-1]
             x_diff = xt - state.x 
             y_diff = yt - state.y
-            while(math.sqrt(dx**2 + dy**2)< 0.1):
+            while(math.sqrt(x_diff**2 + y_diff**2) < 0.1):
                 self.is_finished = True
         self.index = ind 
         return ind
