@@ -18,8 +18,11 @@ class PurePursuitController(object):
     P = 0 
     I = 0
     D = 0
+<<<<<<< Updated upstream
     
 
+=======
+>>>>>>> Stashed changes
 
 
     def __init__(self, vehicle_name=''):
@@ -30,7 +33,11 @@ class PurePursuitController(object):
         self.target_velocity = 0.0
         self.last_index = 0
         self.is_finished = False
+<<<<<<< Updated upstream
         self.last_time = 0.0 
+=======
+        self.last_time = 0.0
+>>>>>>> Stashed changes
 
     def compute_control(self, state, target=None):
         steering = self.compute_steering(state, target)
@@ -69,7 +76,11 @@ class PurePursuitController(object):
             self.sum_error += error
             # time derivative first order
             get_time = rospy.get_time()
+<<<<<<< Updated upstream
             dt = 0.01 #get_time - state.last_state_time
+=======
+            dt = get_time - state.last_state_time
+>>>>>>> Stashed changes
             self.last_time = state.time_stamp
             if error*self.error_total < 0.0: # integral anti-windup
                 self.sum_error = 0
