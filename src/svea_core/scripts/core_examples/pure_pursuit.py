@@ -16,7 +16,7 @@ from svea.simulators.sim_SVEA import SimSVEA
 vehicle_name = "SVEA"
 init_state = [0.0, 0.0, 0.0, 0.0] #[x, y, yaw, v], units: [m, m, rad, m/s]
 init_state = VehicleState(*init_state)
-target_velocity = 0.6 # [m/s]
+target_velocity = 0.9 # [m/s]
 dt = 0.01
 
 # trajectory

@@ -6,10 +6,10 @@ import rospy
 
 class PurePursuitController(object):
 
-    k = 0.6  # look forward gain
-    Lfc = 0.4  # look-ahead distance
-    K_p = 1.0  #TODO speed control propotional gain
-    K_i = 0.2  #TODO speed control integral gain
+    k = 0.6# look forward gain
+    Lfc = 0.2 # look-ahead distance
+    K_p = 0.9  #TODO speed control propotional gain
+    K_i = 0.5  #TODO speed control integral gain
     K_d = 0.0  #TODO speed control derivitive gain
     L = 0.324  # [m] wheel base of vehicle
     sum_error = 0
@@ -61,6 +61,8 @@ class PurePursuitController(object):
             self.D = 0.0
             return 0.0
         else:
+          #return self.target_velocity
+          
             # speed control
             error = self.target_velocity - state.v
             # sum of error 
@@ -76,7 +78,8 @@ class PurePursuitController(object):
             D = self.K_d*(error-self.error_total)/dt
             self.error_total = error
 
-            control_output = P + I + D 
+            control_output = P + I + D
+            
             return self.target_velocity + control_output
     def find_target(self, state):
         ind = self._calc_target_index(state)
