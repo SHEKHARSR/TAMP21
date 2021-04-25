@@ -108,6 +108,6 @@ class PurePursuitController(object):
         
         if self.target != None:
             # Calculate difference between target and actual state
-            while(math.hypot(self.traj_x[-1]-state.x, self.traj_y[-1]-state.y) < 0.1):
+            if(math.hypot(self.traj_x[-1]-state.x, self.traj_y[-1]-state.y) < 0.1):
                 self.is_finished = True
         return ind
