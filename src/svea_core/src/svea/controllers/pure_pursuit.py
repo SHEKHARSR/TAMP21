@@ -68,8 +68,8 @@ class PurePursuitController(object):
             # sum of error 
             self.sum_error += error
             # time derivative first order
-            get_time = rospy.get_time()
-            dt = 0.01 #get_time - state.last_state_time
+            time = rospy.get_time()
+            dt = 0.01 #time - state.last_state_time
             self.last_time = state.time_stamp
             if error*self.error_total < 0.0: # integral anti-windup
                 self.sum_error = 0
