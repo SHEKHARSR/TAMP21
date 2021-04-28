@@ -22,6 +22,7 @@ from util import angleToInterval
 from util import angleToContinous
 
 ### ::::::SVEA:::::
+from src.svea_core.src.svea.states import VehicleState
 from svea_managers import svea_archetypes
 from svea.states import VehicleState
 from svea.localizers import LocalizationInterface
