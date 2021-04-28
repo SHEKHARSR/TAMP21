@@ -23,10 +23,9 @@ from util import angleToContinous
 
 ### ::::::SVEA:::::
 from src.svea_core.src.svea.states import VehicleState
-from svea_managers import svea_archetypes
-from svea.states import VehicleState
-from svea.localizers import LocalizationInterface
-from svea.data import BasicDataHandler, TrajDataHandler, RVIZPathHandler
+from src.svea_core.src.svea.svea_managers import svea_archetypes
+from src.svea_core.src.svea.localizers import LocalizationInterface
+from src.svea_core.src.svea.data import BasicDataHandler, TrajDataHandler, RVIZPathHandler
 from svea.simulators.sim_SVEA import SimSVEA
 ### ::::::SVEA:::::
 class pos2DKalmanFilter:
