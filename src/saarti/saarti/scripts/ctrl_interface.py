@@ -27,6 +27,14 @@ from coordinate_transforms import ptsFrenetToCartesian
 from std_msgs.msg import Int16
 from util import angleToInterval
 
+
+#::: SVEA :::
+from src.svea_core.src.svea.controllers import *
+from src.svea_core.src.svea_msgs.msg import lli_ctrl
+from src.svea_core.src.svea.actuation import ActuationInterface
+#::: SVEA :::
+
+
 class CtrlInterface:
     def __init__(self):
         
