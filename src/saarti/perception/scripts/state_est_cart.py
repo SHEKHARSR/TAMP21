@@ -21,9 +21,16 @@ from tf.transformations import quaternion_from_euler
 from util import angleToInterval
 from util import angleToContinous
 
+### ::::::SVEA:::::
+from svea_managers import svea_archetypes
+from svea.states import VehicleState
+from svea.localizers import LocalizationInterface
+from svea.data import BasicDataHandler, TrajDataHandler, RVIZPathHandler
+from svea.simulators.sim_SVEA import SimSVEA
+### ::::::SVEA:::::
 class pos2DKalmanFilter:
     # constructor
-    def __init__(self,dt,Qscale):
+    def __init__(self, dt, Qscale):
         self.x = np.array([[0.], # X
                            [0.], # Xdot
                            [0.], # Y
@@ -172,6 +179,11 @@ class StateEstCart:
         self.g = rospy.get_param('/car/inertia/g')
         self.Iz = rospy.get_param('/car/inertia/I_z')
 
+        # load SVEA parameters
+        self.vehicle_name = "SVEA4" 
+
+
+
         if(self.system_setup == "rhino_real"):
             from opendlv_ros.msg import SensorMsgGPS
             from opendlv_ros.msg import SensorMsgCAN 
@@ -179,8 +191,14 @@ class StateEstCart:
         elif(self.system_setup == "rhino_fssim" or self.system_setup == "gotthard_fssim"):
             from fssim_common.msg import State as fssimState
 
+        elif(self.system_setup == "SVEA"):
+            from svea.data import *
+            from svea.state import VehicleState # [x_position (m),y_position (m), yaw (rad) , velocity(ms^-1)]
+            #Data handing for svea
+            #if 
+            
 
-        
+
         # init local vars
         self.state_out = State()
         self.live = False # todo incorporate in "system_setup"
