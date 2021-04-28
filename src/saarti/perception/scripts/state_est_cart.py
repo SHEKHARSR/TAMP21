@@ -22,11 +22,11 @@ from util import angleToInterval
 from util import angleToContinous
 
 ### ::::::SVEA:::::
-from src.svea_core.src.svea.states import VehicleState
+from src.svea_core.src.svea.states import VehicleState as VehicleStateMsg
 from src.svea_core.src.svea.svea_managers import svea_archetypes
 from src.svea_core.src.svea.localizers import LocalizationInterface
 from src.svea_core.src.svea.data import BasicDataHandler, TrajDataHandler, RVIZPathHandler
-from svea.simulators.sim_SVEA import SimSVEA
+from src.svea_core.src.svea.simulators.sim_SVEA import SimSVEA
 ### ::::::SVEA:::::
 class pos2DKalmanFilter:
     # constructor
@@ -193,7 +193,8 @@ class StateEstCart:
 
         elif(self.system_setup == "SVEA"):
             from svea.data import *
-            from svea.state import VehicleState # [x_position (m),y_position (m), yaw (rad) , velocity(ms^-1)]
+            # [x_position (m),y_position (m), yaw (rad) , velocity(ms^-1)]
+            from svea.state import VehicleState as VehicleStateMsg
             #Data handing for svea
             #if 
             
@@ -233,6 +234,10 @@ class StateEstCart:
         elif(self.system_setup == "rhino_fssim"):
             self.fssim_state_sub = rospy.Subscriber("/fssim/base_pose_ground_truth", fssimState, self.fssim_state_callback)
             self.received_fssim_state = False
+        #SVEA state messages subscribe
+        elif(self.system_setup == "SVEA"):
+            self.svea_state_subscribe = rospy.Subscriber("/svea_core/msg",VehicleStateMsg)
+        
         else: 
             rospy.logerr("state_est_cart: invalid value of system_setup param, system_setup = " + self.system_setup)
         self.statepub = rospy.Publisher('state_cart', State, queue_size=1)
@@ -256,6 +261,10 @@ class StateEstCart:
         elif(self.system_setup == "rhino_fssim"):
             while(not self.received_fssim_state):
                 rospy.loginfo_throttle(1, "state_est_cart: waiting fssim state message")
+                self.rate.sleep()
+        elif(self.system_setup == "SVEA"):
+            while(not self.received_svea_state):
+                rospy.loginfo_throttle(1, "state_est_cart: waiting opendlv messages")
                 self.rate.sleep()
 
         rospy.logwarn("state_est_cart: started with sensor setup " + self.system_setup)
