@@ -17,6 +17,7 @@ vehicle_name = "SVEA"
 init_state = [0.0, 0.0, 0.0, 0.0] #[x, y, yaw, v], units: [m, m, rad, m/s]
 init_state = VehicleState(*init_state)
 target_velocity = 0.9 # [m/s]
+target_velocity_new = 0.1 # [m/s]
 dt = 0.01
 
 # trajectory
@@ -55,8 +56,11 @@ def main():
         simulator.toggle_pause_simulation()
 
     # simualtion loop
+    time = rospy.get_time()
     svea.controller.target_velocity = target_velocity
     while not svea.is_finished and not rospy.is_shutdown():
+        if rospy.get_time() > time+5:
+            svea.controller.target_velocity = target_velocity_new
         state = svea.wait_for_state()
 
         # compute control input via pure pursuit

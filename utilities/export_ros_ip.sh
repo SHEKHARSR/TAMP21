@@ -1,4 +1,4 @@
-svea_hostname=svea2
+svea_hostname=svea4
 export ROS_MASTER_URI=http://$svea_hostname.local:11311
 
 machine_ip=(`hostname -I`)

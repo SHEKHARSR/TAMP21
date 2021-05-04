@@ -15,12 +15,12 @@ from svea.track import Track
 
 ## SIMULATION PARAMS ##########################################################
 vehicle_name = ""
-target_velocity = 1.0 # [m/s]
+target_velocity = 0.3 # [m/s]
 dt = 0.01 # frequency of the model updates
 
 #TODO: create a trajectory that goes around the track
-xs = [-7.4 , -2.93, 10.3, 5.6, -7.2, -13.5]
-ys = [-15.3,  -7.11, 11.5, 14.5, -4.1, -11.6]
+xs = [-7.4 , -4.5] #10.3, 5.6, -7.2, -13.5]
+ys = [-15.3,  -11] #11.5, 14.5, -4.1, -11.6]
 traj_x = []
 traj_y = []
 for i in range(0,len(xs)-1):
@@ -89,8 +89,13 @@ def main():
         state = svea.wait_for_state()
 
         # compute control input via pure pursuit
-        steering, velocity = svea.compute_control()
-        svea.send_control(steering, velocity)
+        #steering, velocity = svea.compute_control()
+        #svea.send_control(steering, velocity)
+        
+        # compute control input via control interface
+        #TODO write subscriber to the saarti node
+        #steering, velocity = saarti.saarti.compute_control()
+        #svea.send_control(steering, velocity)
 
         # visualize data
         if use_matplotlib or use_rviz:

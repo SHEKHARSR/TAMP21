@@ -532,8 +532,8 @@ plt.close('all')
 track_name = "sh_reduced_mu_turn"
 
 # export params
-export_path_fssim = "/home/larsvens/ros/tamp__ws/src/fssim/fssim_gazebo/models/track"
-export_path_saarti = "/home/larsvens/ros/tamp__ws/src/saarti/common/config/tracks/" + track_name
+#export_path_fssim = "/home/larsvens/ros/tamp__ws/src/fssim/fssim_gazebo/models/track"
+export_path_saarti = "/home/nvidia/svea_starter/src/saarti/common/config/tracks/" + track_name
 if not os.path.exists(export_path_saarti):
     os.makedirs(export_path_saarti)
 

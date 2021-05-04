@@ -4,7 +4,7 @@
     <arg name="start_pt" default= '-7.43, -15.3, 0.8978652, 0'/>
     <arg name="use_rviz" default="true"/>
     <arg name="use_matplotlib" default="false"/>
-    <arg name="is_sim" default="true"/>
+    <arg name="is_sim" default="false"/>
     <arg name="map_file" default="$(find svea_core)/resources/maps/floor2.yaml" />
 
     <group if="$(eval is_sim == true)">
@@ -21,12 +21,15 @@
         <param name="use_matplotlib" value="$(arg use_matplotlib)"/>
         <param name="is_sim" value="$(arg is_sim)"/>
     </node>
-    
-     <!-- load params -->
-     <rosparam command="load" file="$(find common)/config/ctrl_interface_params.yaml" /> 
-    
-    <!-- ctrl interface -->
-    <node pkg="saarti<" type="ctrl_interface.py" name="ctrl_interface" output="screen"> 
+    <!--open serial connection for controlling SVEA-->
+    <node pkg="rosserial_python" type="serial_node.py" name="serial_node">
+        <param name="port" value="/dev/ttyACM0"/>
+        <param name="baud" value="250000"/>
     </node>
+    <include file="$(find svea_sensors)/launch/localize.launch">
+        <arg name="use_rs" value="true"/>
+        <arg name="file_name" value="$(arg map_file)"/>
+    </include>
+ 
 
 </launch>

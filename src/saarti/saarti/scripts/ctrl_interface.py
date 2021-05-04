@@ -53,6 +53,10 @@ class CtrlInterface:
             from fssim_common.msg import Cmd as FssimCmd
             self.cmdpub = rospy.Publisher('/fssim/cmd', FssimCmd, queue_size=1)
             self.cmd = FssimCmd()
+        elif(self.system_setup == "SVEA" or self.system_setup == "SVEA"):
+            from svea_core.Vehicle_msg.msg import msg
+            self.svea_pub = rospy.Publisher('/SVEA_manager/update_svea', SVEA_object, queue_size=1)
+            self.svea = svea_update() 
         
         # set static vehicle params
         self.setStaticParams()
