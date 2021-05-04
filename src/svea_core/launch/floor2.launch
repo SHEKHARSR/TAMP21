@@ -23,10 +23,10 @@
     </node>
     
      <!-- load params -->
-     <rosparam command="load" file="$(find common)/config/ctrl_interface_params.yaml" /> 
+     
     
     <!-- ctrl interface -->
-    <node pkg="saarti<" type="ctrl_interface.py" name="ctrl_interface" output="screen"> 
-    </node>
+    <rosparam command="load" file="$(find saarti)/config/planning_and_ctrl_config.yaml" /> 
+    <node pkg="saarti" type="saarti_node" name="saarti_node" /> 
 
 </launch>

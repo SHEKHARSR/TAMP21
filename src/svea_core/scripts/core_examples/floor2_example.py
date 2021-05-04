@@ -14,7 +14,7 @@ from svea.track import Track
 
 
 ## SIMULATION PARAMS ##########################################################
-vehicle_name = ""
+vehicle_name = "SVEA4"
 target_velocity = 0.3 # [m/s]
 dt = 0.01 # frequency of the model updates
 

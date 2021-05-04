@@ -22,11 +22,14 @@ from util import angleToInterval
 from util import angleToContinous
 
 ### ::::::SVEA:::::
-from src.svea_core.src.svea.states import VehicleState as VehicleStateMsg
-from src.svea_core.src.svea.svea_managers import svea_archetypes
-from src.svea_core.src.svea.localizers import LocalizationInterface
-from src.svea_core.src.svea.data import BasicDataHandler, TrajDataHandler, RVIZPathHandler
-from src.svea_core.src.svea.simulators.sim_SVEA import SimSVEA
+from svea.svea_managers import svea_archetypes
+from svea.states import VehicleState
+from svea.localizers import LocalizationInterface
+from svea.controllers.pure_pursuit import PurePursuitController
+from svea.data import BasicDataHandler, TrajDataHandler, RVIZPathHandler
+from svea.models.bicycle import SimpleBicycleModel
+from svea.simulators.sim_SVEA import SimSVEA
+from svea.track import Track
 ### ::::::SVEA:::::
 class pos2DKalmanFilter:
     # constructor
@@ -180,7 +183,7 @@ class StateEstCart:
         self.Iz = rospy.get_param('/car/inertia/I_z')
 
         # load SVEA parameters
-        self.vehicle_name = "SVEA4" 
+        self.vehicle_name = "SVEA" 
 
 
 
@@ -192,11 +195,18 @@ class StateEstCart:
             from fssim_common.msg import State as fssimState
 
         elif(self.system_setup == "SVEA"):
-            from svea.data import *
+            from svea_msgs.msg import lli_ctrl 
+            from svea_msgs.msg import lli_emergenc 
+            from svea_msgs.msg import lli_encoder
+            from svea_msgs.msg import VehicleState 
             # [x_position (m),y_position (m), yaw (rad) , velocity(ms^-1)]
-            from svea.state import VehicleState as VehicleStateMsg
+            
             #Data handing for svea
-            #if 
+                # select data handler based on the ros params
+            if use_rviz:
+                DataHandler = RVIZPathHandler
+            else:
+                DataHandler = TrajDataHandler
             
 
 
