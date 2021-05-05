@@ -20,13 +20,6 @@
         <param name="use_rviz" value="$(arg use_rviz)"/>
         <param name="use_matplotlib" value="$(arg use_matplotlib)"/>
         <param name="is_sim" value="$(arg is_sim)"/>
-    </node>
-    
-     <!-- load params -->
-     
-    
-    <!-- ctrl interface -->
-    <rosparam command="load" file="$(find saarti)/config/planning_and_ctrl_config.yaml" /> 
-    <node pkg="saarti" type="saarti_node" name="saarti_node" /> 
-
+    </node>    
+    <node pkg="perception" type="road_perception.py" name="road_perception"> </node>
 </launch>

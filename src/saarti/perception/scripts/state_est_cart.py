@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Descrition: Publishes state in cartesian coordinatesand broadcasts tf tamp_map -> base_link
+# Descrition: Publishes state in cartesian coordinates and broadcasts tf tamp_map -> base_link
 # selects input topic based on system_setup param 
 # system_setup = "rhino_real": /OpenDLV/SensorMsgGPS & /OpenDLV/SensorMsgCAN
 # system_setup = "rhino_fssim": /fssim/base_pose_ground_truth
@@ -24,12 +24,15 @@ from util import angleToContinous
 ### ::::::SVEA:::::
 from svea.svea_managers import svea_archetypes
 from svea.states import VehicleState
+from svea.states import *
+from geometry_msgs.msg import TwistWithCovarianceStamped
+from nav_msgs.msg import Odometry
 from svea.localizers import LocalizationInterface
 from svea.controllers.pure_pursuit import PurePursuitController
 from svea.data import BasicDataHandler, TrajDataHandler, RVIZPathHandler
 from svea.models.bicycle import SimpleBicycleModel
 from svea.simulators.sim_SVEA import SimSVEA
-from svea.track import Track
+#from svea.track import Track
 ### ::::::SVEA:::::
 class pos2DKalmanFilter:
     # constructor
@@ -183,7 +186,7 @@ class StateEstCart:
         self.Iz = rospy.get_param('/car/inertia/I_z')
 
         # load SVEA parameters
-        self.vehicle_name = "SVEA" 
+        self.vehicle_name = "" 
 
 
 
@@ -244,10 +247,12 @@ class StateEstCart:
         elif(self.system_setup == "rhino_fssim"):
             self.fssim_state_sub = rospy.Subscriber("/fssim/base_pose_ground_truth", fssimState, self.fssim_state_callback)
             self.received_fssim_state = False
-        #SVEA state messages subscribe
+        #SVEA state messages subscriber
+        #TODO Write messages from sensor node #Needs to to updated from IMU, Lidar
         elif(self.system_setup == "SVEA"):
-            self.svea_state_subscribe = rospy.Subscriber("/svea_core/msg",VehicleStateMsg)
-        
+            self.svea_Vehicle_state_sub = rospy.Subscriber("/svea_sensors/svea_msgs",VehicleState, self.Vehicle_state_callback)
+            self.svea_state_msg = svea_msgs.msg.VehicleState()
+            self.received_VehicleState_state = False
         else: 
             rospy.logerr("state_est_cart: invalid value of system_setup param, system_setup = " + self.system_setup)
         self.statepub = rospy.Publisher('state_cart', State, queue_size=1)
@@ -273,8 +278,8 @@ class StateEstCart:
                 rospy.loginfo_throttle(1, "state_est_cart: waiting fssim state message")
                 self.rate.sleep()
         elif(self.system_setup == "SVEA"):
-            while(not self.received_svea_state):
-                rospy.loginfo_throttle(1, "state_est_cart: waiting opendlv messages")
+            while(not self.received_VehicleState_state):
+                rospy.loginfo_throttle(1, "state_est_cart: waiting svea state messages")
                 self.rate.sleep()
 
         rospy.logwarn("state_est_cart: started with sensor setup " + self.system_setup)
@@ -620,6 +625,14 @@ class StateEstCart:
     def origin_pose_utm_callback(self, msg):
         self.origin_pose_utm = msg
         self.received_origin_pose_utm = True
+    
+    ### ::::::SVEA:::::
+    def Vehicle_state_callback(self, msg):
+        self.VehicleState = msg
+        self.received_svea_state = True
+        #TODO write actual callback from sensors 
+
+    ### ::::::SVEA:::::
 
 if __name__ == '__main__':
     sec = StateEstCart()

@@ -14,7 +14,7 @@ from svea.track import Track
 
 
 ## SIMULATION PARAMS ##########################################################
-vehicle_name = "SVEA4"
+vehicle_name = ""
 target_velocity = 0.3 # [m/s]
 dt = 0.01 # frequency of the model updates
 
@@ -89,8 +89,8 @@ def main():
         state = svea.wait_for_state()
 
         # compute control input via pure pursuit
-        #steering, velocity = svea.compute_control()
-        #svea.send_control(steering, velocity)
+        steering, velocity = svea.compute_control()
+        svea.send_control(steering, velocity)
         
         # compute control input via control interface
         #TODO write subscriber to the saarti node
