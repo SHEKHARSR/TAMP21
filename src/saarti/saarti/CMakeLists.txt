@@ -17,6 +17,11 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  #######
+  geometry_msgs
+  nav_msgs
+  svea_msgs
+  roscpp
 )
 
 # CUDA

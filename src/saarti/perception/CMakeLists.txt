@@ -12,6 +12,11 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   common
+  ######
+  geometry_msgs
+  nav_msgs
+  svea_msgs
+  roscpp
 )
 
 ## System dependencies are found with CMake's conventions

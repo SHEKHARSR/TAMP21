@@ -186,7 +186,8 @@ class StateEstCart:
         self.Iz = rospy.get_param('/car/inertia/I_z')
 
         # load SVEA parameters
-        self.vehicle_name = "" 
+        
+        #self.robot_name = "svea"
 
 
 
@@ -198,20 +199,11 @@ class StateEstCart:
             from fssim_common.msg import State as fssimState
 
         elif(self.system_setup == "SVEA"):
-            from svea_msgs.msg import lli_ctrl 
-            from svea_msgs.msg import lli_emergenc 
-            from svea_msgs.msg import lli_encoder
+            #from svea_msgs.msg import lli_ctrl 
+            #from svea_msgs.msg import lli_emergenc 
+            #from svea_msgs.msg import lli_encoder
             from svea_msgs.msg import VehicleState 
             # [x_position (m),y_position (m), yaw (rad) , velocity(ms^-1)]
-            
-            #Data handing for svea
-                # select data handler based on the ros params
-            if use_rviz:
-                DataHandler = RVIZPathHandler
-            else:
-                DataHandler = TrajDataHandler
-            
-
 
         # init local vars
         self.state_out = State()
@@ -250,9 +242,9 @@ class StateEstCart:
         #SVEA state messages subscriber
         #TODO Write messages from sensor node #Needs to to updated from IMU, Lidar
         elif(self.system_setup == "SVEA"):
-            self.svea_Vehicle_state_sub = rospy.Subscriber("/svea_sensors/svea_msgs",VehicleState, self.Vehicle_state_callback)
+            self.svea_Vehicle_state_sub = rospy.Subscriber("/state",VehicleState, self.Vehicle_state_callback)
             self.svea_state_msg = svea_msgs.msg.VehicleState()
-            self.received_VehicleState_state = False
+            self.received_svea_state = False
         else: 
             rospy.logerr("state_est_cart: invalid value of system_setup param, system_setup = " + self.system_setup)
         self.statepub = rospy.Publisher('state_cart', State, queue_size=1)
@@ -278,7 +270,7 @@ class StateEstCart:
                 rospy.loginfo_throttle(1, "state_est_cart: waiting fssim state message")
                 self.rate.sleep()
         elif(self.system_setup == "SVEA"):
-            while(not self.received_VehicleState_state):
+            while(not self.received_svea_state):
                 rospy.loginfo_throttle(1, "state_est_cart: waiting svea state messages")
                 self.rate.sleep()
 
@@ -628,9 +620,23 @@ class StateEstCart:
     
     ### ::::::SVEA:::::
     def Vehicle_state_callback(self, msg):
-        self.VehicleState = msg
+        self.VehicleState = msg 
+        self.state_out.X = msg.x
+        self.state_out.Y = msg.y
+        self.state_out.psi = msg.yaw
+        self.state_out.psidot = 0
+        self.state_out.vx = msg.v
+        self.state_out.vy = 0
+        self.state_out.ax = 0
+        self.state_out.ay = 0
+        Fzf, Fzr = self.get_normal_forces_from_motion(self.state_out.ax,0.)
+        self.state_out.Fzf = Fzf 
+        self.state_out.Fzr = Fzr 
+        self.state_out.header.stamp = rospy.Time.now()
+        self.statepub.publish(self.state_out)
         self.received_svea_state = True
         #TODO write actual callback from sensors 
+        
 
     ### ::::::SVEA:::::
 

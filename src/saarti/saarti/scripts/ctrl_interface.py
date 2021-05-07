@@ -29,9 +29,8 @@ from util import angleToInterval
 
 
 #::: SVEA :::
-from src.svea_core.src.svea.controllers import *
-from src.svea_core.src.svea_msgs.msg import lli_ctrl
-from src.svea_core.src.svea.actuation import ActuationInterface
+from svea_msgs.msg import lli_ctrl
+from svea.svea_core import ActuationInterface
 #::: SVEA :::
 
 

@@ -27,14 +27,14 @@ from util import angleToContinous
 import re
 from scipy import interpolate
 
-def get_cl_from_kml(filepath):    
+"""def get_cl_from_kml(filepath):    
     tree = etree.parse(filepath)    
     lineStrings = tree.findall('.//{http://www.opengis.net/kml/2.2}LineString')    
     for attributes in lineStrings:
         for subAttribute in attributes:
             if subAttribute.tag == '{http://www.opengis.net/kml/2.2}coordinates':
                 coords = subAttribute.text
-    
+
     # clean and cast
     coords = re.split(',| ',coords)
     coords[0] = coords[0].translate(None, "\n\t\t\t\t")
@@ -70,7 +70,7 @@ def get_cl_from_kml(filepath):
     X_utm_out = out[0]
     Y_utm_out = out[1]    
 
-    return X_utm_out, Y_utm_out, utm_nr, utm_letter 
+    return X_utm_out, Y_utm_out, utm_nr, utm_letter """
 
 #def get_oval_cl(l_long,R_curve,lanewidth):
 #    # section a 
@@ -529,7 +529,7 @@ def export_as_kml(track_name, export_path, X_cl,Y_cl,origin_pose_utm):
 # Track Generation
 #
 plt.close('all')
-track_name = "sh_reduced_mu_turn"
+track_name = "asta_coll_avoid"
 
 # export params
 #export_path_fssim = "/home/larsvens/ros/tamp__ws/src/fssim/fssim_gazebo/models/track"
@@ -549,7 +549,7 @@ if(track_name == "asta_zero_short"):
     
     l_before_curve = 30
     R_corner = 28 # 8m/s^2 @ 15m/s  # before: 22
-    lanewidth = 2.3
+    lanewidth = 5
     X_cl_, Y_cl_ = get_triangular_shape_cl(R_corner,l_before_curve)   
 
     # rotate track to origin pose utm
@@ -557,7 +557,7 @@ if(track_name == "asta_zero_short"):
     Y_cl = Y_cl_*np.cos(origin_pose_utm["psi0_utm"]) + X_cl_*np.sin(origin_pose_utm["psi0_utm"])    
     
     
-elif(track_name == "asta_zero_long"):
+elif(track_name == "sh_reduced_mu_turn"):
     # set origin pose in UTM to AstaZero HSA
     origin_pose_utm =	{
       "X0_utm": 367498,
@@ -567,9 +567,9 @@ elif(track_name == "asta_zero_long"):
       "utm_letter": 'V'
     }
     
-    l_before_curve = 70
-    R_corner = 28 # 8m/s^2 @ 15m/s  # before: 22
-    lanewidth = 2.3
+    l_before_curve = 50
+    R_corner = 30 # 8m/s^2 @ 15m/s  # before: 22
+    lanewidth = 100
     X_cl_, Y_cl_ = get_triangular_shape_cl(R_corner,l_before_curve)   
  
     # rotate track to origin pose utm
@@ -591,7 +591,7 @@ elif(track_name == "asta_coll_avoid"):
     #lanewidth = 2.3
     #X_cl_, Y_cl_ = get_triangular_shape_cl(R_corner,l_before_curve)   
     
-    l_straight = 350
+    l_straight = 100
     l_connect = 15
     R_corners = 10
     lanewidth = 2.3
@@ -623,7 +623,7 @@ elif(track_name == "asta_local_min"):
     Y_cl = Y_cl_*np.cos(origin_pose_utm["psi0_utm"]) + X_cl_*np.sin(origin_pose_utm["psi0_utm"])
 
 
-if(track_name in ["lokforaregatan","storaholm_gravel_south","rural_test_route_1","asta_gauntlet", "asta_gauntlet_east","asta_oval_east","sh_reduced_mu_turn","sh_coll_avoid"]): 
+"""if(track_name in ["lokforaregatan","storaholm_gravel_south","rural_test_route_1","asta_gauntlet", "asta_gauntlet_east","asta_oval_east","sh_reduced_mu_turn","sh_coll_avoid"]): 
     filepath = path.join('../config/tracks/ge_exports/' + track_name + '.kml')
     
     if(track_name in ["asta_gauntlet", "asta_gauntlet_east"]): 
@@ -653,7 +653,7 @@ if(track_name in ["lokforaregatan","storaholm_gravel_south","rural_test_route_1"
 
     # set centerline in map coord sys
     X_cl = X_utm - X0_utm
-    Y_cl = Y_utm - Y0_utm
+    Y_cl = Y_utm - Y0_utm"""
 
 # compute s
 X_cl = np.append(X_cl, X_cl[0])
@@ -788,7 +788,7 @@ dict_track = {"centerline": np.array(centerline).tolist(),
               }
 
 export_as_yaml(track_name, export_path_saarti, dict_track)
-export_as_sdf(track_name, export_path_fssim, dict_track)
+#export_as_sdf(track_name, export_path_fssim, dict_track)
 export_as_kml(track_name, export_path_saarti, X_cl,Y_cl,origin_pose_utm)
 print "[INFO] Track generation completed"
 print "[INFO] Track length: " + str(s[-1])

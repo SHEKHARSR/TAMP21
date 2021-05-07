@@ -142,6 +142,7 @@ class TrackInterface:
             pathleft.poses.append(pose)
         self.dubvispub.publish(pathleft)
         
+        
         Xright,Yright = ptsFrenetToCartesian(s,dlb,fcl_X,fcl_Y,psic_out,s)
         pathright = navPath()        
         pathright.header.stamp = rospy.Time.now()
@@ -160,6 +161,10 @@ class TrackInterface:
             for i in range(self.N_delay_repub_pathglobal): 
                 self.rate.sleep()
             self.pathglobalpub.publish(self.pathglobal)
+            self.pathglobalvispub.publish(pathglobalvis)
+            self.dubvispub.publish(pathleft)
+            self.dlbvispub.publish(pathright) 
+
 
     def get_mu_from_segments(self,s,s_begin_mu_segments,mu_segment_values,N_mu_segments):
         Ns = s.size
