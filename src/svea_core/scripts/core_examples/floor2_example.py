@@ -9,7 +9,7 @@ from svea.localizers import LocalizationInterface
 from svea.controllers.pure_pursuit import PurePursuitController
 from svea.data import BasicDataHandler, TrajDataHandler, RVIZPathHandler
 from svea.models.bicycle import SimpleBicycleModel
-from svea.simulators.sim_SVEA import SimSVEA
+from svea.simulators.sim_SVEA_copy import SimSVEA
 from svea.track import Track
 
 
@@ -68,7 +68,7 @@ def main():
     if is_sim:
         # start the simulation
         model_for_sim = SimpleBicycleModel(start_pt)
-        simulator = SimSVEA(vehicle_name, model_for_sim,
+        simulator = SimSVEA(model_for_sim,vehicle_name,
                             dt=dt, run_lidar=True, start_paused=True).start()
 
     # start pure pursuit SVEA manager
