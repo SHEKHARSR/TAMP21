@@ -33,7 +33,7 @@ SAARTI::SAARTI(ros::NodeHandle nh){
     status_pub_ = nh.advertise<common::SaartiStatus>("saarti_status",1);
     pathlocal_sub_ = nh.subscribe("pathlocal", 1, &SAARTI::pathlocal_callback,this);
     obstacles_sub_ = nh.subscribe("obs", 1, &SAARTI::obstacles_callback,this);
-    state_sub_ = nh.subscribe("state", 1,  &SAARTI::state_callback,this);
+    state_sub_ = nh.subscribe("state_", 1,  &SAARTI::state_callback,this);
     ctrlmode_sub_ = nh.subscribe("ctrl_mode", 1,  &SAARTI::ctrlmode_callback,this);
     vxref_sub_ = nh.subscribe("vxref", 1,  &SAARTI::vxref_callback,this);
 

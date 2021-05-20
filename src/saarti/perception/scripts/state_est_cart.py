@@ -199,9 +199,6 @@ class StateEstCart:
             from fssim_common.msg import State as fssimState
 
         elif(self.system_setup == "SVEA"):
-            #from svea_msgs.msg import lli_ctrl 
-            #from svea_msgs.msg import lli_emergenc 
-            #from svea_msgs.msg import lli_encoder
             from svea_msgs.msg import VehicleState 
             # [x_position (m),y_position (m), yaw (rad) , velocity(ms^-1)]
 
@@ -240,7 +237,7 @@ class StateEstCart:
             self.fssim_state_sub = rospy.Subscriber("/fssim/base_pose_ground_truth", fssimState, self.fssim_state_callback)
             self.received_fssim_state = False
         #SVEA state messages subscriber
-        #TODO Write messages from sensor node #Needs to to updated from IMU, Lidar
+    
         elif(self.system_setup == "SVEA"):
             self.svea_Vehicle_state_sub = rospy.Subscriber("/state",VehicleState, self.Vehicle_state_callback)
             self.svea_state_msg = svea_msgs.msg.VehicleState()

@@ -27,371 +27,6 @@ from util import angleToContinous
 import re
 from scipy import interpolate
 
-"""def get_cl_from_kml(filepath):    
-    tree = etree.parse(filepath)    
-    lineStrings = tree.findall('.//{http://www.opengis.net/kml/2.2}LineString')    
-    for attributes in lineStrings:
-        for subAttribute in attributes:
-            if subAttribute.tag == '{http://www.opengis.net/kml/2.2}coordinates':
-                coords = subAttribute.text
-
-    # clean and cast
-    coords = re.split(',| ',coords)
-    coords[0] = coords[0].translate(None, "\n\t\t\t\t")
-    coords = coords[:-1]
-    
-    # split in lon lat and alt
-    if(len(coords) % 3 != 0):
-        print "Error: len(coords) not divisible by three"
-    lat = []
-    lon = []
-    alt = []
-    for i in range(len(coords)/3):
-        lon.append(float(coords[3*i]))
-        lat.append(float(coords[3*i+1]))
-        alt.append(float(coords[3*i+2]))
-    lat = np.array(lat)
-    lon = np.array(lon)
-    alt = np.array(alt)
-    
-    # convert to utm
-    X_utm,Y_utm,utm_nr,utm_letter = utm.from_latlon(lat, lon)
-    
-    # interpolate 
-    ds = 1.0 # want approx 1 m between pts
-    # approximate stot
-    stot = 0
-    for i in range(X_utm.size-1):
-        stot += np.sqrt((X_utm[i+1]-X_utm[i])**2 + (Y_utm[i+1]-Y_utm[i])**2)
-    N = int(stot/ds)
-    unew = np.arange(0, 1.0, 1.0/N) # N equidistant pts
-    tck, u = interpolate.splprep([X_utm, Y_utm], s=0)
-    out = interpolate.splev(unew, tck)
-    X_utm_out = out[0]
-    Y_utm_out = out[1]    
-
-    return X_utm_out, Y_utm_out, utm_nr, utm_letter """
-
-#def get_oval_cl(l_long,R_curve,lanewidth):
-#    # section a 
-#    la = l_long
-#    Na = la # default 1 node per meter
-#    Xa = np.linspace(0,la,Na)
-#    Ya = np.zeros(Na)
-#
-#    # section b
-#    Nb = np.ceil(R_curve*np.pi)
-#    t = np.linspace(np.pi,0,Nb)
-#    Xb = R_curve*np.cos(t) + Xa[-1]
-#    Yb = R_curve*np.sin(t) - R_curve + Ya[-1]    
-#
-#    # section c
-#    lextra = 5
-#    lc = la + lextra
-#    Nc = lc
-#    Xc = np.linspace(Xb[-1],Xb[-1]-lc,Nc)
-#    Yc = np.zeros(Nc)+Yb[-1]
-#    
-#    # section h
-#    Nd = np.ceil(R_curve*np.pi) 
-#    t = np.linspace(-np.pi/2,-3*np.pi/2,Nh)
-#    Xh = R*np.cos(t) + Xg[-1]
-#    Yh = R*np.sin(t) + Yg[-1]+R
-#
-#    
-#    # section i
-#    Ni = li
-#    Xi = np.linspace(-li,0,Ni)
-#    Yi = np.zeros(Ni)
-
-# Centerline generation functions
-def get_Lshaped_cl(l_vert,l_hor,R_curve):
-    # params
-    la = l_vert # back of L shape (200 short 300 long)
-    lc = l_hor  # base of L shape
-    Rb  = R_curve  # 22 radius of curve at experiment turn
-    R = 20  # radius at other turns (30) 
-    
-    # section a 
-    Na = la # default 1 node per meter
-    Xa = np.linspace(0,la,Na)
-    Ya = np.zeros(Na)
-    
-    # section b
-    Nb = np.ceil(2*Rb*np.pi/4.0)
-    t = np.linspace(np.pi/2,0,Nb)
-    Xb = Rb*np.cos(t) + Xa[-1]
-    Yb = Rb*np.sin(t) - Rb + Ya[-1]
-    
-    # section c
-    Nc = lc
-    Xc = np.zeros(Nc) + Xb[-1]
-    Yc = np.linspace(Yb[-1],Yb[-1]-lc,Nc)
-    
-    # section d
-    Nd = np.ceil(R*np.pi) 
-    t = np.linspace(0,-np.pi,Nd)
-    Xd = R*np.cos(t) + Xc[-1] - R
-    Yd = R*np.sin(t) + Yc[-1]
-    
-    # section e
-    le = lc + Rb -3*R
-    Ne = le
-    Xe = np.zeros(Ne) + Xd[-1]
-    Ye = np.linspace(Yd[-1], Yd[-1]+le,Ne)
-    
-    # section f
-    Nf = np.ceil(2*R*np.pi/4.0)
-    t = np.linspace(0,np.pi/2.0,Nf)
-    Xf = R*np.cos(t) + Xe[-1] - R
-    Yf = R*np.sin(t) + Ye[-1]
-    
-    # section g
-    li = 5
-    lg = la+Rb-3*R + li
-    Ng = lg
-    Xg = np.linspace(Xf[-1],Xf[-1]-lg,Ng)
-    Yg = np.zeros(Ng)+Yf[-1]
-    
-    # section h
-    Nh = np.ceil(R*np.pi) 
-    t = np.linspace(-np.pi/2,-3*np.pi/2,Nh)
-    Xh = R*np.cos(t) + Xg[-1]
-    Yh = R*np.sin(t) + Yg[-1]+R
-    
-    # section i
-    Ni = li
-    Xi = np.linspace(-li,0,Ni)
-    Yi = np.zeros(Ni)
-    
-    # concatenate vectors
-    X_cl_tmp = np.concatenate((Xa, Xb, Xc, Xd, Xe, Xf, Xg, Xh, Xi), axis=0)
-    Y_cl_tmp = np.concatenate((Ya, Yb, Yc, Yd, Ye, Yf, Yg, Yh, Yi), axis=0)
-    
-    # remove duplicate points
-    threshold_dist = 0.1
-    X_cl = []
-    Y_cl = []
-    for i in range(X_cl_tmp.size-1):
-        dist = np.sqrt((X_cl_tmp[i+1]-X_cl_tmp[i])**2 + (Y_cl_tmp[i+1]-Y_cl_tmp[i])**2)
-        if (dist > threshold_dist):
-            X_cl.append(X_cl_tmp[i])
-            Y_cl.append(Y_cl_tmp[i])        
-    return np.array(X_cl), np.array(Y_cl)
-
-def get_aug_L_shape_cl(R_curve,l_before_curve,l_after_curve):
-    # params
-    laa = 60 
-    lac = 100
-    lae = l_before_curve
-    Rb  = R_curve  # 22 radius of curve at experiment turn
-    Ra = 50 # radii at a section
-    R = 15  # radius at other turns 
-    lc = l_after_curve
-    Rta = 10 # radius when turning around for reset
-    psi_ab = 0.45
-    l_resetstraight = 10
-    
-    # section aa (first straight bit)
-    Naa = laa 
-    Xaa = np.linspace(0,laa,Naa)
-    Yaa = np.zeros(Naa)
-    
-    # section ab (slight left)
-    Nab = np.ceil(abs(psi_ab*Ra))
-    t = np.linspace(np.pi,np.pi - psi_ab,Nab)
-    Xab = Xaa[-1] + Ra*np.sin(t)
-    Yab = Yaa[-1] + Ra*np.cos(t) + Ra
-    
-    # section ac (second straight bit)
-    Nac = lac
-    Xac_ = np.linspace(0,lac,Nac)
-    Yac_ = np.zeros(Nac)
-    Xac = Xab[-1] + Xac_*np.cos(psi_ab) - Yac_*np.sin(psi_ab)
-    Yac = Yab[-1] + Xac_*np.sin(psi_ab) + Yac_*np.cos(psi_ab)
-    
-    # section ad (slight right)
-    psi_ad = psi_ab
-    Nad = np.ceil(abs(psi_ad*Ra))
-    t = np.linspace(-psi_ad,0,Nad)
-    Xad = Xac[-1] + Ra*np.sin(t) + Ra*np.sin(psi_ad)
-    Yad = Yac[-1] + Ra*np.cos(t) - Ra*np.cos(psi_ad)
-    
-    # section ae (straight bit before b)
-    Nae = lae 
-    Xae = np.linspace(Xad[-1],Xad[-1]+lae,Nae)
-    Yae = Yad[-1] * np.ones(Nae)
-    deltaYa = Yae[-1]-Yaa[0]
-    
-    # section b
-    Nb = np.ceil(2*Rb*np.pi/4.0)
-    t = np.linspace(np.pi/2,0,Nb)
-    Xb = Rb*np.cos(t) + Xae[-1]
-    Yb = Rb*np.sin(t) - Rb + Yae[-1]
-    
-    # section c
-    Nc = lc
-    Xc = np.zeros(Nc) + Xb[-1]
-    Yc = np.linspace(Yb[-1],Yb[-1]-lc,Nc)
-    
-    # section d
-    Nd = np.ceil(R*np.pi) 
-    t = np.linspace(0,-np.pi,Nd)
-    Xd = R*np.cos(t) + Xc[-1] - R
-    Yd = R*np.sin(t) + Yc[-1]
-    
-    # section e
-    le = lc+Rb-deltaYa-2*Rta-R
-    Ne = int(le)
-    Xe = np.zeros(Ne) + Xd[-1]
-    Ye = np.linspace(Yd[-1], Yd[-1]+le,Ne)
-    
-    # section f
-    Nf = np.ceil(2*R*np.pi/4.0)
-    t = np.linspace(0,np.pi/2.0,Nf)
-    Xf = R*np.cos(t) + Xe[-1] - R
-    Yf = R*np.sin(t) + Ye[-1]
-    
-    # section g 
-    lg = Xb[-1] -3*R + l_resetstraight
-    Ng = int(lg)
-    Xg = np.linspace(Xf[-1],Xf[-1]-lg,Ng)
-    Yg = np.zeros(Ng)+Yf[-1]
-    
-    # section h
-    Nh = np.ceil(Rta*np.pi) 
-    t = np.linspace(-np.pi/2,-3*np.pi/2,Nh)
-    Xh = Rta*np.cos(t) + Xg[-1]
-    Yh = Rta*np.sin(t) + Yg[-1]+Rta
-    
-    # section i
-    li = l_resetstraight/2.0
-    Ni = int(li)
-    Xi = np.linspace(Xh[-1],0,Ni)
-    Yi = np.zeros(Ni)
-    
-    # concatenate vectors
-    X_cl_tmp = np.concatenate((Xaa[0:-1], Xab[0:-1], Xac[0:-1], Xad[0:-1], Xae[0:-1], Xb[0:-1], Xc[0:-1], Xd[0:-1], Xe[0:-1], Xf[0:-1], Xg[0:-1], Xh[0:-1], Xi), axis=0)
-    Y_cl_tmp = np.concatenate((Yaa[0:-1], Yab[0:-1], Yac[0:-1], Yad[0:-1], Yae[0:-1], Yb[0:-1], Yc[0:-1], Yd[0:-1], Ye[0:-1], Yf[0:-1], Yg[0:-1], Yh[0:-1], Yi), axis=0)
-    print X_cl_tmp
-    
-    # remove duplicate points
-    threshold_dist = 0.1
-    X_cl = []
-    Y_cl = []
-    for i in range(X_cl_tmp.size-1):
-        dist = np.sqrt((X_cl_tmp[i+1]-X_cl_tmp[i])**2 + (Y_cl_tmp[i+1]-Y_cl_tmp[i])**2)
-        if (dist > threshold_dist):
-            X_cl.append(X_cl_tmp[i])
-            Y_cl.append(Y_cl_tmp[i])        
-    return np.array(X_cl), np.array(Y_cl)
-
-def get_triangular_shape_cl(R_curve,l_before_curve):
-    # params
-    laa = 60 
-    lac = 100
-    lae = l_before_curve
-    Rb  = R_curve  # 22 radius of curve at experiment turn
-    Ra = 50 # radii at a section
-    R = 22  # radius at other turns 
-    Rta = 10 # radius when turning around for reset
-    psi_ab = 0.45
-    l_resetstraight = 10
-    
-    # section aa (first straight bit)
-    Naa = laa 
-    Xaa = np.linspace(0,laa,Naa)
-    Yaa = np.zeros(Naa)
-    
-    # section ab (slight left)
-    Nab = np.ceil(abs(psi_ab*Ra))
-    t = np.linspace(np.pi,np.pi - psi_ab,Nab)
-    Xab = Xaa[-1] + Ra*np.sin(t)
-    Yab = Yaa[-1] + Ra*np.cos(t) + Ra
-    
-    # section ac (second straight bit)
-    Nac = lac
-    Xac_ = np.linspace(0,lac,Nac)
-    Yac_ = np.zeros(Nac)
-    Xac = Xab[-1] + Xac_*np.cos(psi_ab) - Yac_*np.sin(psi_ab)
-    Yac = Yab[-1] + Xac_*np.sin(psi_ab) + Yac_*np.cos(psi_ab)
-    
-    # section ad (slight right)
-    psi_ad = psi_ab
-    Nad = np.ceil(abs(psi_ad*Ra))
-    t = np.linspace(-psi_ad,0,Nad)
-    Xad = Xac[-1] + Ra*np.sin(t) + Ra*np.sin(psi_ad)
-    Yad = Yac[-1] + Ra*np.cos(t) - Ra*np.cos(psi_ad)
-    
-    # section ae (straight bit before b)
-    Nae = lae 
-    Xae = np.linspace(Xad[-1],Xad[-1]+lae,Nae)
-    Yae = Yad[-1] * np.ones(Nae)
-    deltaYa = Yae[-1]-Yaa[0]
-    
-    # section b
-    Nb = np.ceil(2*Rb*np.pi/4.0)
-    t = np.linspace(np.pi/2,0,Nb)
-    Xb = Rb*np.cos(t) + Xae[-1]
-    Yb = Rb*np.sin(t) - Rb + Yae[-1]
-    
-    # section c
-    lc = 2*Rta+deltaYa-Rb-R
-    Nc = int(lc)
-    Xc = np.zeros(Nc) + Xb[-1]
-    Yc = np.linspace(Yb[-1],Yb[-1]-lc,Nc)
-    
-    # section d
-    Nd = np.ceil(R*np.pi/2) 
-    t = np.linspace(0,-np.pi/2,Nd)
-    Xd = R*np.cos(t) + Xc[-1] - R
-    Yd = R*np.sin(t) + Yc[-1]
-    
-    # section e
-#    le = lc+Rb-deltaYa-2*Rta-R
-#    Ne = int(le)
-#    Xe = np.zeros(Ne) + Xd[-1]
-#    Ye = np.linspace(Yd[-1], Yd[-1]+le,Ne)
-    
-    # section f
-#    Nf = np.ceil(2*R*np.pi/4.0)
-#    t = np.linspace(0,np.pi/2.0,Nf)
-#    Xf = R*np.cos(t) + Xe[-1] - R
-#    Yf = R*np.sin(t) + Ye[-1]
-    
-    # section g 
-    lg = Xb[-1] -R + l_resetstraight
-    Ng = int(lg)
-    Xg = np.linspace(Xd[-1],Xd[-1]-lg,Ng)
-    Yg = np.zeros(Ng)+Yd[-1]
-    
-    # section h
-    Nh = np.ceil(Rta*np.pi) 
-    t = np.linspace(-np.pi/2,-3*np.pi/2,Nh)
-    Xh = Rta*np.cos(t) + Xg[-1]
-    Yh = Rta*np.sin(t) + Yg[-1]+Rta
-    
-    # section i
-    li = l_resetstraight/2.0
-    Ni = int(li)
-    Xi = np.linspace(Xh[-1],0,Ni)
-    Yi = np.zeros(Ni)
-    
-    # concatenate vectors
-    X_cl_tmp = np.concatenate((Xaa[0:-1], Xab[0:-1], Xac[0:-1], Xad[0:-1], Xae[0:-1], Xb[0:-1], Xc[0:-1], Xd[0:-1], Xg[0:-1], Xh[0:-1], Xi), axis=0)
-    Y_cl_tmp = np.concatenate((Yaa[0:-1], Yab[0:-1], Yac[0:-1], Yad[0:-1], Yae[0:-1], Yb[0:-1], Yc[0:-1], Yd[0:-1], Yg[0:-1], Yh[0:-1], Yi), axis=0)
-    print X_cl_tmp
-    
-    # remove duplicate points
-    threshold_dist = 0.1
-    X_cl = []
-    Y_cl = []
-    for i in range(X_cl_tmp.size-1):
-        dist = np.sqrt((X_cl_tmp[i+1]-X_cl_tmp[i])**2 + (Y_cl_tmp[i+1]-Y_cl_tmp[i])**2)
-        if (dist > threshold_dist):
-            X_cl.append(X_cl_tmp[i])
-            Y_cl.append(Y_cl_tmp[i])        
-    return np.array(X_cl), np.array(Y_cl)
 
 def get_oval_shape_cl(R_curves,l_straight,l_connect):
     # params
@@ -400,41 +35,49 @@ def get_oval_shape_cl(R_curves,l_straight,l_connect):
     l_resetstraight = l_connect
     
     # section a (first straight bit)
-    Na = int(la)
+    Na = int(la)*5
     Xa = np.linspace(0,la,Na)
     Ya = np.zeros(Na)
     
     # section b 
-    Nb = np.ceil(Rta*np.pi)
+    Nb = np.ceil(Rta*np.pi)*5
     t = np.linspace(np.pi/2,-np.pi/2,Nb)
     Xb = Rta*np.cos(t) + Xa[-1]
     Yb = Rta*np.sin(t) - Rta + Ya[-1]
     
     # section c
     lc = la + l_resetstraight
-    Nc = int(lc)
+    Nc = int(lc)*5
     Xc = np.linspace(Xb[-1],Xb[-1]-lc,Nc)
     Yc = np.zeros(Nc) + Yb[-1]
     
     # section d
-    Nd = np.ceil(Rta*np.pi) 
+    Nd = np.ceil(Rta*np.pi)*5 
     t = np.linspace(-np.pi/2,-3*np.pi/2,Nd)
     Xd = Rta*np.cos(t) + Xc[-1]
     Yd = Rta*np.sin(t) + Yc[-1]+Rta
     
     # section e
     le = l_resetstraight/2.0
-    Ne = int(le)
+    Ne = int(le)*5
     Xe = np.linspace(Xd[-1],0,Ne)
     Ye = np.zeros(Ne)
     
     # concatenate vectors
     X_cl_tmp = np.concatenate((Xa[0:-1], Xb[0:-1], Xc[0:-1], Xd[0:-1], Xe[0:-1]), axis=0)
     Y_cl_tmp = np.concatenate((Ya[0:-1], Yb[0:-1], Yc[0:-1], Yd[0:-1], Ye[0:-1]), axis=0)
-    print X_cl_tmp
+    #print X_cl_tmp
+    #print Y_cl_tmp
+    print X_cl_tmp.size
+    #print Y_cl_tmp.shape
+
     
     # remove duplicate points
     threshold_dist = 0.1
+    # to flip the track
+    flipY = True
+    if flipY is True:
+        Y_cl_tmp = -Y_cl_tmp
     X_cl = []
     Y_cl = []
     for i in range(X_cl_tmp.size-1):
@@ -525,11 +168,11 @@ def export_as_kml(track_name, export_path, X_cl,Y_cl,origin_pose_utm):
     
     
 
-#
+# MAIN
 # Track Generation
 #
 plt.close('all')
-track_name = "asta_coll_avoid"
+track_name = "SVEA_track"
 
 # export params
 #export_path_fssim = "/home/larsvens/ros/tamp__ws/src/fssim/fssim_gazebo/models/track"
@@ -537,27 +180,8 @@ export_path_saarti = "/home/nvidia/svea_starter/src/saarti/common/config/tracks/
 if not os.path.exists(export_path_saarti):
     os.makedirs(export_path_saarti)
 
-if(track_name == "asta_zero_short"):
-    # set origin pose in UTM to AstaZero HSA
-    origin_pose_utm =	{
-      "X0_utm": 367498,
-      "Y0_utm": 6406777,
-      "psi0_utm": -1.1949329177828036,
-      "utm_nr": 33, 
-      "utm_letter": 'V'
-    }
-    
-    l_before_curve = 30
-    R_corner = 28 # 8m/s^2 @ 15m/s  # before: 22
-    lanewidth = 5
-    X_cl_, Y_cl_ = get_triangular_shape_cl(R_corner,l_before_curve)   
 
-    # rotate track to origin pose utm
-    X_cl = X_cl_*np.cos(origin_pose_utm["psi0_utm"]) - Y_cl_*np.sin(origin_pose_utm["psi0_utm"])
-    Y_cl = Y_cl_*np.cos(origin_pose_utm["psi0_utm"]) + X_cl_*np.sin(origin_pose_utm["psi0_utm"])    
-    
-    
-elif(track_name == "sh_reduced_mu_turn"):
+elif(track_name == "SVEA_track"):
     # set origin pose in UTM to AstaZero HSA
     origin_pose_utm =	{
       "X0_utm": 367498,
@@ -566,94 +190,20 @@ elif(track_name == "sh_reduced_mu_turn"):
       "utm_nr": 33, 
       "utm_letter": 'V'
     }
-    
-    l_before_curve = 50
-    R_corner = 30 # 8m/s^2 @ 15m/s  # before: 22
-    lanewidth = 100
-    X_cl_, Y_cl_ = get_triangular_shape_cl(R_corner,l_before_curve)   
- 
-    # rotate track to origin pose utm
-    X_cl = X_cl_*np.cos(origin_pose_utm["psi0_utm"]) - Y_cl_*np.sin(origin_pose_utm["psi0_utm"])
-    Y_cl = Y_cl_*np.cos(origin_pose_utm["psi0_utm"]) + X_cl_*np.sin(origin_pose_utm["psi0_utm"])
-
-elif(track_name == "asta_coll_avoid"):
-    # set origin pose in UTM to AstaZero HSA
-    origin_pose_utm =	{
-      "X0_utm": 367498,
-      "Y0_utm": 6406777,
-      "psi0_utm": -1.1949329177828036,
-      "utm_nr": 33, 
-      "utm_letter": 'V'
-    }
-    
-    #l_before_curve = 115
-    #R_corner = 40
-    #lanewidth = 2.3
-    #X_cl_, Y_cl_ = get_triangular_shape_cl(R_corner,l_before_curve)   
-    
-    l_straight = 100
-    l_connect = 15
-    R_corners = 10
-    lanewidth = 2.3
+          
+    l_straight = 5
+    l_connect = 2
+    R_corners = 1.5
+    lanewidth = 0.3
     X_cl_, Y_cl_ = get_oval_shape_cl(R_corners,l_straight, l_connect)
  
     # rotate track to origin pose utm
-    X_cl = X_cl_*np.cos(origin_pose_utm["psi0_utm"]) - Y_cl_*np.sin(origin_pose_utm["psi0_utm"])
-    Y_cl = Y_cl_*np.cos(origin_pose_utm["psi0_utm"]) + X_cl_*np.sin(origin_pose_utm["psi0_utm"])
     
-elif(track_name == "asta_local_min"):
-    # set origin pose in UTM to AstaZero HSA
-    origin_pose_utm =	{
-      "X0_utm": 367498,
-      "Y0_utm": 6406767,
-      "psi0_utm": -1.1949329177828036,
-      "utm_nr": 33, 
-      "utm_letter": 'V'
-    }
+    rotangle = 0.3*np.pi
+    X_cl = (X_cl_*np.cos(rotangle) - Y_cl_*np.sin(rotangle))*1
+    Y_cl = (Y_cl_*np.cos(rotangle) + X_cl_*np.sin(rotangle))*1
     
-    l_vert = 200
-    l_hor = 80
-    R_corner = 35
-    lanewidth = 2.8
-    X_cl_, Y_cl_ = get_Lshaped_cl(l_vert,l_hor,R_corner)
-    Y_cl_ = -Y_cl_
-    
-    # rotate track to origin pose utm
-    X_cl = X_cl_*np.cos(origin_pose_utm["psi0_utm"]) - Y_cl_*np.sin(origin_pose_utm["psi0_utm"])
-    Y_cl = Y_cl_*np.cos(origin_pose_utm["psi0_utm"]) + X_cl_*np.sin(origin_pose_utm["psi0_utm"])
 
-
-"""if(track_name in ["lokforaregatan","storaholm_gravel_south","rural_test_route_1","asta_gauntlet", "asta_gauntlet_east","asta_oval_east","sh_reduced_mu_turn","sh_coll_avoid"]): 
-    filepath = path.join('../config/tracks/ge_exports/' + track_name + '.kml')
-    
-    if(track_name in ["asta_gauntlet", "asta_gauntlet_east"]): 
-        lanewidth = 3.5
-    else:
-        lanewidth = 2.3
-    X_utm, Y_utm, utm_nr, utm_letter = get_cl_from_kml(filepath)           
-
-    # adjust offset for this route
-    Xoffs = 0
-    Yoffs = 0
-    X_utm = X_utm+Xoffs
-    Y_utm = Y_utm+Yoffs
- 
-    # set utm origin pose
-    X0_utm = float(X_utm[0])
-    Y0_utm = float(Y_utm[0])
-    psi0_utm = float(np.arctan2(Y_utm[1]-Y_utm[0],X_utm[1]-X_utm[0]))
-            
-    origin_pose_utm =	{
-      "X0_utm": X0_utm,
-      "Y0_utm": Y0_utm,
-      "psi0_utm": psi0_utm,
-      "utm_nr": utm_nr, 
-      "utm_letter": utm_letter
-    }
-
-    # set centerline in map coord sys
-    X_cl = X_utm - X0_utm
-    Y_cl = Y_utm - Y0_utm"""
 
 # compute s
 X_cl = np.append(X_cl, X_cl[0])
@@ -665,7 +215,7 @@ s_tmp = np.cumsum(ds)
 s_tmp = np.append(0, s_tmp)
 
 # resample with equidistant points
-s = np.arange(0,s_tmp[-1],1)
+s = np.arange(0,s_tmp[-1],0.5)
 X_cl = np.interp(s,s_tmp,X_cl)
 Y_cl = np.interp(s,s_tmp,Y_cl)
 centerline = np.column_stack((np.array(X_cl),np.array(Y_cl)))
@@ -700,7 +250,7 @@ X_ll,Y_ll = ptsFrenetToCartesian(s,dub,X_cl,Y_cl,psic,s)
 X_rl,Y_rl = ptsFrenetToCartesian(s,dlb,X_cl,Y_cl,psic,s)
 
 # downsample to get cone positions
-threshold_dist_cones = 4
+threshold_dist_cones = 1
 cones_left_X = [X_ll[0]]
 cones_left_Y = [Y_ll[0]]
 for i in range(X_ll.size-1):
@@ -788,7 +338,6 @@ dict_track = {"centerline": np.array(centerline).tolist(),
               }
 
 export_as_yaml(track_name, export_path_saarti, dict_track)
-#export_as_sdf(track_name, export_path_fssim, dict_track)
 export_as_kml(track_name, export_path_saarti, X_cl,Y_cl,origin_pose_utm)
 print "[INFO] Track generation completed"
 print "[INFO] Track length: " + str(s[-1])

@@ -37,7 +37,7 @@ class RoadPerception:
         self.pathglobal = Path()
         self.received_pathglobal = False
         
-        self.state_sub = rospy.Subscriber("state", State, self.state_callback)
+        self.state_sub = rospy.Subscriber("state_", State, self.state_callback)
         self.state = State()
         self.received_state = False
         

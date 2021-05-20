@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 <launch>
 
-    <arg name="start_pt" default= '-7.43, -15.3, 0.8978652, 0'/>
+    <!-- <arg name="start_pt" default= '-7.43, -15.3, 0.8978652, 0'/> -->
+    <arg name="start_pt" default= '0.93, 1.63, 0.897652, 0'/>
     <arg name="use_rviz" default="true"/>
     <arg name="use_matplotlib" default="false"/>
     <arg name="is_sim" default="true"/>
@@ -24,14 +25,23 @@
         <param name="is_sim" value="$(arg is_sim)"/>
     </node> 
     <rosparam command="load" file="$(find perception)/config/perception_config.yaml" />
-    <arg name="track_name" default="asta_coll_avoid" /> 
+    <arg name="track_name" default="SVEA_track" /> 
     <arg name="system_setup" default="SVEA" />
     <arg name="robot_name" default="svea" />
     <param name="system_setup" type="string" value="$(arg system_setup)" /> 
     <param name="robot_name" type="string" value="$(arg robot_name)" /> 
     <rosparam command="load" file="$(find common)/config/vehicles/$(arg robot_name)/config/car.yaml" />
     <param name="track_name" type="string" value="$(arg track_name)" />	 
-    <node pkg="perception" type="track_iface.py" name="track_iface" output="screen"     />
-    <node pkg="perception" type="state_est_cart.py" name="state_est_cart" output="screen"   > </node>
-    
+        <!-- road percept, planning & ctrl nodes -->
+    <node pkg="perception" type="track_iface.py" name="track_iface"  />
+    <node pkg="perception" type="state_est_cart.py" name="state_est_cart"   > </node>
+    <node pkg="perception" type="state_est_frenet.py" name="state_est_frenet" /> 
+    <node pkg="perception" type="road_perception.py" name="road_perception"> </node> -->
+        <!-- saarti nodes -->
+    <rosparam command="load" file="$(find saarti)/config/planning_and_ctrl_config.yaml" /> 
+    <arg name="exp_config" default="asta_reduced_mu_turn_config.yaml"/>
+    <rosparam command="load" file="$(find common)/config/exp_config/$(arg exp_config)" />
+    <node pkg="saarti" type="saarti_node" name="saarti_node" output="screen"  /> 
+    <!-- experiment manager node -->
+    <node pkg="common" type="exp_manager.py" name="experiment_manager"  required="true"> </node>
 </launch>
