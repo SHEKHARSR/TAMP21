@@ -136,7 +136,7 @@ class ExperimentManager:
         
         # init ctrl mode
         self.ctrl_mode = 0 # # 0: stop, 1: cruise_ctrl, 2: tamp 
-        #rospy.loginfo_throttle(1, "I am here")
+        rospy.loginfo_throttle(1, "I am here")
         # publish mu segments for track iface
         self.s_begin_mu_segments = rospy.get_param('/s_begin_mu_segments')
         self.mu_segment_values = rospy.get_param('/mu_segment_values')
