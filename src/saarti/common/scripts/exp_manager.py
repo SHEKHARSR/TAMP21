@@ -89,7 +89,19 @@ class ExperimentManager:
         if(self.system_setup == "rhino_real"):
             self.ctrl_sub = rospy.Subscriber("/OpenDLV/ActuationRequest", ActuationRequest, self.odlv_cmd_callback)
             self.cmd_msg = ActuationRequest()
+<<<<<<< HEAD
       
+=======
+
+### ::::::SVEA:::::#####      
+        if(self.system_setup == "SVEA"):
+            self.tireparampub = rospy.Publisher('/tire_params', TireParams, queue_size=1)
+            self.tireparams = TireParams()
+            #self.ctrl_sub = rospy.Subscriber(#TODO"/control_svea", Cmd, self.svea_control_callback)
+            #self.cmd_msg = Cmd()        
+        self.received_cmd_msg = False
+        
+>>>>>>> 26a945c62f04dbf88d294ca37df2690a4e00f24c
         # init misc internal variables
         self.pathglobal = Path()
         self.received_pathglobal = False
