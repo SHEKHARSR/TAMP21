@@ -19,8 +19,8 @@ target_velocity = 0.3 # [m/s]
 dt = 0.01 # frequency of the model updates
 
 #TODO: create a trajectory that goes around the track
-xs = [-7.4 , -4.5] #10.3, 5.6, -7.2, -13.5]
-ys = [-15.3,  -11] #11.5, 14.5, -4.1, -11.6]
+xs = [-7.4 , -4.5 , 10.3, 5.6, -7.2, -13.5]
+ys = [-15.3,  -11 , 11.5, 14.5, -4.1, -11.6]
 traj_x = []
 traj_y = []
 for i in range(0,len(xs)-1):

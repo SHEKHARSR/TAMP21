@@ -30,7 +30,6 @@ from util import angleToInterval
 
 #::: SVEA :::
 from svea_msgs.msg import lli_ctrl
-from svea.svea_core import ActuationInterface
 #::: SVEA :::
 
 
@@ -62,7 +61,7 @@ class CtrlInterface:
             self.cmd = FssimCmd()
         elif(self.system_setup == "SVEA" or self.system_setup == "SVEA"):
             from svea_core.Vehicle_msg.msg import msg
-            self.svea_pub = rospy.Publisher('/SVEA_manager/update_svea', SVEA_object, queue_size=1)
+            self.svea_pub = rospy.Publisher(#TODO'/SVEA_manager/update_svea', SVEA_object, queue_size=1)
             self.svea = svea_update() 
         
         # set static vehicle params

@@ -18,14 +18,29 @@ from common.msg import State
 from common.msg import SaartiStatus
 from common.msg import MuSegments
 from std_msgs.msg import Float32
-from fssim_common.msg import TireParams
-from opendlv_ros.msg import ActuationRequest 
-from fssim_common.msg import Cmd
-from fssim_common.msg import CarInfo
+#from fssim_common.msg import TireParams
+#from opendlv_ros.msg import ActuationRequest 
+#from fssim_common.msg import Cmd
+#from fssim_common.msg import CarInfo
 from std_msgs.msg import Int16
 from visualization_msgs.msg import Marker
 from visualization_msgs.msg import MarkerArray
 from coordinate_transforms import ptsFrenetToCartesian
+
+
+### ::::::SVEA:::::
+from svea.svea_managers import svea_archetypes
+from svea.states import VehicleState
+from svea.states import *
+from geometry_msgs.msg import TwistWithCovarianceStamped
+from nav_msgs.msg import Odometry
+from svea.localizers import LocalizationInterface
+from svea.controllers.pure_pursuit import PurePursuitController
+from svea.data import BasicDataHandler, TrajDataHandler, RVIZPathHandler
+from svea.models.bicycle import SimpleBicycleModel
+from svea.simulators.sim_SVEA import SimSVEA
+#from svea.track import Track
+### ::::::SVEA:::::
 
 class ExperimentManager:
     # constructor
@@ -51,7 +66,7 @@ class ExperimentManager:
         
         # init subs pubs
         self.pathglobalsub = rospy.Subscriber("pathglobal", Path, self.pathglobal_callback)
-        self.statesub = rospy.Subscriber("state", State, self.state_callback)
+        self.statesub = rospy.Subscriber("state_", State, self.state_callback)
         self.statussub = rospy.Subscriber("saarti_status", SaartiStatus, self.status_callback)
         self.obspub = rospy.Publisher('/obs', Obstacles, queue_size=1)
         self.obs_undet_vis_pub = rospy.Publisher('/obs_undet_vis', MarkerArray, queue_size=1)
@@ -74,6 +89,13 @@ class ExperimentManager:
         if(self.system_setup == "rhino_real"):
             self.ctrl_sub = rospy.Subscriber("/OpenDLV/ActuationRequest", ActuationRequest, self.odlv_cmd_callback)
             self.cmd_msg = ActuationRequest()
+
+### ::::::SVEA:::::#####      
+        if(self.system_setup == "SVEA"):
+            self.tireparampub = rospy.Publisher('/tire_params', TireParams, queue_size=1)
+            self.tireparams = TireParams()
+            #self.ctrl_sub = rospy.Subscriber(#TODO"/control_svea", Cmd, self.svea_control_callback)
+            #self.cmd_msg = Cmd()        
         self.received_cmd_msg = False
         
         # init misc internal variables

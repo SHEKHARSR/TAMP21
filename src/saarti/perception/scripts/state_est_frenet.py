@@ -36,7 +36,7 @@ class StateEstFrenet:
         self.received_state_cart = False
         
         # init pubs
-        self.statepub = rospy.Publisher('state', State, queue_size=10)
+        self.statepub = rospy.Publisher('state_', State, queue_size=10)
         self.state_out = State()        
            
         # init local vars
