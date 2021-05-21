@@ -89,15 +89,7 @@ class ExperimentManager:
         if(self.system_setup == "rhino_real"):
             self.ctrl_sub = rospy.Subscriber("/OpenDLV/ActuationRequest", ActuationRequest, self.odlv_cmd_callback)
             self.cmd_msg = ActuationRequest()
-
-### ::::::SVEA:::::#####      
-        if(self.system_setup == "SVEA"):
-            self.tireparampub = rospy.Publisher('/tire_params', TireParams, queue_size=1)
-            self.tireparams = TireParams()
-            #self.ctrl_sub = rospy.Subscriber(#TODO"/control_svea", Cmd, self.svea_control_callback)
-            #self.cmd_msg = Cmd()        
-        self.received_cmd_msg = False
-        
+      
         # init misc internal variables
         self.pathglobal = Path()
         self.received_pathglobal = False
@@ -144,7 +136,7 @@ class ExperimentManager:
         
         # init ctrl mode
         self.ctrl_mode = 0 # # 0: stop, 1: cruise_ctrl, 2: tamp 
-        
+        #rospy.loginfo_throttle(1, "I am here")
         # publish mu segments for track iface
         self.s_begin_mu_segments = rospy.get_param('/s_begin_mu_segments')
         self.mu_segment_values = rospy.get_param('/mu_segment_values')
