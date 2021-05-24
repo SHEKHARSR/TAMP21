@@ -36,12 +36,15 @@
     <node pkg="perception" type="track_iface.py" name="track_iface"  />
     <node pkg="perception" type="state_est_cart.py" name="state_est_cart"   > </node>
     <node pkg="perception" type="state_est_frenet.py" name="state_est_frenet" /> 
-    <node pkg="perception" type="road_perception.py" name="road_perception"> </node> -->
+    <node pkg="perception" type="road_perception.py" name="road_perception"> </node> 
         <!-- saarti nodes -->
     <rosparam command="load" file="$(find saarti)/config/planning_and_ctrl_config.yaml" /> 
     <arg name="exp_config" default="asta_reduced_mu_turn_config.yaml"/>
     <rosparam command="load" file="$(find common)/config/exp_config/$(arg exp_config)" />
-    <node pkg="saarti" type="saarti_node" name="saarti_node" output="screen"  /> 
+    <node pkg="saarti" type="saarti_node" name="saarti_node"/> 
     <!-- experiment manager node -->
-    <node pkg="common" type="exp_manager.py" name="experiment_manager"  required="true"> </node>
+    <!-- <node pkg="common" type="exp_manager.py" name="experiment_manager"  required="true"> </node> -->
+
+  <include file="$(find svea_core)/launch/exp_manager.launch" />
+
 </launch>
