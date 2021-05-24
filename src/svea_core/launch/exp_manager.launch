@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+
+    <rosparam command="load" file="$(find perception)/config/perception_config.yaml" />
+    <arg name="track_name" default="SVEA_track" /> 
+    <arg name="system_setup" default="SVEA" />
+    <arg name="robot_name" default="svea" />
+    <param name="system_setup" type="string" value="$(arg system_setup)" /> 
+    <param name="robot_name" type="string" value="$(arg robot_name)" /> 
+    <rosparam command="load" file="$(find common)/config/vehicles/$(arg robot_name)/config/car.yaml" />
+    <param name="track_name" type="string" value="$(arg track_name)" />	 
+    <rosparam command="load" file="$(find saarti)/config/planning_and_ctrl_config.yaml" /> 
+    <arg name="exp_config" default="asta_reduced_mu_turn_config.yaml"/>
+    <rosparam command="load" file="$(find common)/config/exp_config/$(arg exp_config)" />
+    <!-- experiment manager node -->
+    <node pkg="common" type="exp_manager.py" name="experiment_manager"  required="true" output="screen" > </node>
+
+</launch>

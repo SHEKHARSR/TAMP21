@@ -23,18 +23,18 @@
 car:
 
   inertia:
-    m:        190.0   # Weight of the Vehicle [kg]
+    m:        5.0   # Weight of the Vehicle [kg]
     m_driver: 0.0     # Weight of the driver  [kg]
     g:        9.81    # Graviti force         [m/s^2]
-    I_z:      110    # Inertial force I_zz 
+    I_z:      0.05    # Inertial force I_zz 
 
   kinematics:
-    l: 1.53           # Vehicle Length [m]
-    b_F: 1.22          # From COG to front axle [m]
-    b_R: 1.22         # From COG to rear axle [m]
+    l: 0.5           # Vehicle Length [m]
+    b_F: 0.25          # From COG to front axle [m]
+    b_R: 0.25         # From COG to rear axle [m]
     w_front: 0.5    # Percentage of weight front
-    h_cg: 0.262       # Heights of COG [m]
-    l_width: 3.0     # Width of the vehicle body
+    h_cg: 0.15       # Heights of COG [m]
+    l_width: 0.3     # Width of the vehicle body
 
     # l_F = l * (1 - w_front);  # Front cg lever arm [m]
     # l_R = l * w_front;  # Rear  cg lever arm [m]

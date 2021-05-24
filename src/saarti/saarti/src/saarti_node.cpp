@@ -631,8 +631,8 @@ jsk_recognition_msgs::PolygonArray SAARTI::traj2polarr(containers::trajstruct tr
     }
     // lenght and width of chassis for visualization
     float w = sp.l_width;
-    float lf = sp.lf + 0.5f;
-    float lr = sp.lr + 1.0f;
+    float lf = sp.lf ;
+    float lr = sp.lr ;
 
     jsk_recognition_msgs::PolygonArray polarr;
     polarr.header.frame_id = "map";

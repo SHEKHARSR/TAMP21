@@ -6,7 +6,7 @@
     <arg name="use_rviz" default="true"/>
     <arg name="use_matplotlib" default="false"/>
     <arg name="is_sim" default="true"/>
-    <arg name="map_file" default="$(find svea_core)/resources/maps/floor2.yaml" />
+    <arg name="map_file" default="$(find svea_core)/resources/maps/q1.yaml" />
     
 
     <group if="$(eval is_sim == true)">
@@ -14,8 +14,9 @@
     </group>
 
     <node pkg="map_server" type="map_server" name="map_server" output="screen" args="$(arg map_file)" />
-    <rosparam command="load" file="$(find svea_core)/resources/params/obstacles.yaml" />
-    <rosparam command="load" file="$(find svea_core)/resources/params/track.yaml" />
+    <rosparam command="load" file="$(find svea_core)/resources/params/SVEA_track.yaml" />
+    <!-- <rosparam command="load" file="$(find svea_core)/resources/params/obstacles.yaml" /> -->
+    <!-- <rosparam command="load" file="$(find svea_core)/resources/params/track.yaml" /> -->
     
 
     <node pkg="svea_core" type="floor2_example.py" name="floor2_example" output="screen">
