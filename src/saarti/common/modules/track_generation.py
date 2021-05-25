@@ -68,7 +68,7 @@ def get_oval_shape_cl(R_curves,l_straight,l_connect):
     Y_cl_tmp = np.concatenate((Ya[0:-1], Yb[0:-1], Yc[0:-1], Yd[0:-1], Ye[0:-1]), axis=0)
     #print X_cl_tmp
     #print Y_cl_tmp
-    print X_cl_tmp.size
+    #print X_cl_tmp.size
     #print Y_cl_tmp.shape
 
     
@@ -191,10 +191,10 @@ elif(track_name == "SVEA_track"):
       "utm_letter": 'V'
     }
           
-    l_straight = 5
-    l_connect = 2
-    R_corners = 1.5
-    lanewidth = 0.3
+    l_straight = 10#5
+    l_connect = 4 #2
+    R_corners = 2 #1.5
+    lanewidth = 0.5 #0.3
     X_cl_, Y_cl_ = get_oval_shape_cl(R_corners,l_straight, l_connect)
  
     # rotate track to origin pose utm
@@ -341,6 +341,10 @@ export_as_yaml(track_name, export_path_saarti, dict_track)
 export_as_kml(track_name, export_path_saarti, X_cl,Y_cl,origin_pose_utm)
 print "[INFO] Track generation completed"
 print "[INFO] Track length: " + str(s[-1])
+xcl__ = X_cl.tolist()
+print (xcl__)  
+ycl__ = Y_cl.tolist()
+print (ycl__)  
 
 
 
