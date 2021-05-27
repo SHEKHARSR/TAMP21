@@ -19,6 +19,7 @@ from common.msg import MuSegments
 from coordinate_transforms import ptsFrenetToCartesian
 import yaml
 
+
 class TrackInterface:
     def __init__(self):
         rospy.init_node('track_interface', anonymous=True)

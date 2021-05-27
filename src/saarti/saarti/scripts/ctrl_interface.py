@@ -27,10 +27,22 @@ from coordinate_transforms import ptsFrenetToCartesian
 from std_msgs.msg import Int16
 from util import angleToInterval
 
-
-#::: SVEA :::
+### ::::::SVEA:::::
+from svea.svea_managers import svea_archetypes
+from svea.states import VehicleState
+from svea.states import *
+from geometry_msgs.msg import TwistWithCovarianceStamped
+from nav_msgs.msg import Odometry
+from svea.localizers import LocalizationInterface
+# from svea.controllers.pure_pursuit import PurePursuitController
+from svea.data import BasicDataHandler, TrajDataHandler, RVIZPathHandler
+from svea.models.bicycle import SimpleBicycleModel
+from svea.simulators.sim_SVEA import SimSVEA
 from svea_msgs.msg import lli_ctrl
-#::: SVEA :::
+from svea_msgs.msg import lli_emergency
+import actuation
+# from svea_msgs.msg import lli_encoder #Need to change wheels with encoder
+### ::::::SVEA:::::
 
 
 class CtrlInterface:
@@ -60,10 +72,15 @@ class CtrlInterface:
             self.cmdpub = rospy.Publisher('/fssim/cmd', FssimCmd, queue_size=1)
             self.cmd = FssimCmd()
         elif(self.system_setup == "SVEA" or self.system_setup == "SVEA"):
-            from svea_core.Vehicle_msg.msg import msg
-            self.svea_pub = rospy.Publisher(#TODO'/SVEA_manager/update_svea', SVEA_object, queue_size=1)
+            from svea_msgs.msg import lli_ctrl
+            from svea_msgs.msg import lli_emergency
+            import actuation
+            self.svea_pub = rospy.Publisher('/lli/ctrl_actuated', lli_ctrl, queue_size=1)
+            self.svea_pub = rospy.Publisher('/lli/ctrl_request', lli_ctrl, queue_size=1)
             self.svea = svea_update() 
         
+
+
         # set static vehicle params
         self.setStaticParams()
 
@@ -200,6 +217,14 @@ class CtrlInterface:
             #self.vx_errorpub.publish(self.vx_error)
 
             self.rate.sleep()
+            elif (self.system_setup == 'SVEA'):
+                #TODO Emergency conditions for saturations
+                self.lli_ctrl.steering = delta_out
+                self.lli_ctrl.velocity = dc_out
+            self.svea_pub.publish(self.lli_ctrl)
+            
+
+
             
         
     def tamp_ctrl(self):
@@ -224,12 +249,15 @@ class CtrlInterface:
             dyn_ff_term = 1.0*self.trajstar.Fyf[0]/self.trajstar.Cf[0]
         elif(self.system_setup == "gotthard_fssim"):
             dyn_ff_term = 0.1*self.trajstar.Fyf[0]/self.trajstar.Cf[0]
+        elif(self.system_setup =='SVEA'):
+            dyn_ff_term = 0.01*self.trajstar.Fyf[0]/self.trajstar.Cf[0]
         else:
             rospy.logerr("ctrl_interface: invalid value of system_setup param, system_setup = " + self.system_setup)
         delta_out = kin_ff_term + dyn_ff_term
         # saturate output
         if(self.system_setup == "rhino_real"):
             delta_out = float(np.clip(delta_out, a_min = -0.50, a_max = 0.50)) # delta_max = kappa_max*(lf+lr) (TUNE LAT)
+        
         
         # LONGITUDINAL CTRL
         # feedfwd
@@ -251,7 +279,12 @@ class CtrlInterface:
             feedback = 0.0*self.vx_error
             Cr0 = 180
             Cm1 = 5000            
-            dc_out = ((feedfwd+feedback)+Cr0)/Cm1           
+            dc_out = ((feedfwd+feedback)+Cr0)/Cm1 
+        elif(self.system_setup == "SVEA"):
+            dc_out = self.trajstar.vx[5]
+
+            
+
         else:
             dc_out = 0
             rospy.logerr("ctrl_interface: invalid value of system_setup param, system_setup = " + self.system_setup)        
@@ -312,17 +345,18 @@ class CtrlInterface:
 #            lhdist_min = 6.0
 #        else:
 #            lhdist_min = 8.0
-        lhdist_min = 7.0 # 7
-        lhdist_max = 20.0
+        #lhdist_min = 7.0 # 7
+        #lhdist_max = 20.0
         
         # lhdist by vx and psidot        
         #lhdist_vx = lhdist_min + self.state.vx
-        maxpsidot = np.max(np.abs(self.trajstar.psidot[2:])) # not include first few k
+        #maxpsidot = np.max(np.abs(self.trajstar.psidot[2:])) # not include first few k
 #        lhdist_psidot = lhdist_min + (0.07*self.state.vx)/np.max([maxpsidot,0.001]) # dpsi/ds # TUNE LAT
-        lhdist_psidot = lhdist_min + (0.20*self.state.vx)/np.max([maxpsidot,0.001]) # dpsi/ds # TUNE LAT
+        #lhdist_psidot = lhdist_min + (0.20*self.state.vx)/np.max([maxpsidot,0.001]) # dpsi/ds # TUNE LAT
 #        lhdist_psidot = lhdist_min + 1.3/np.max([maxpsidot,0.001]) # 1.3, 1.5 # gauntlet
 #        lhdist_psidot = lhdist_min + 1.5/np.max([maxpsidot,0.001]) # 1.3, 1.5 # obsavoid
-        lhdist = float(np.clip(np.min([lhdist_psidot]), a_min = lhdist_min, a_max = lhdist_max))
+        #lhdist = float(np.clip(np.min([lhdist_psidot]), a_min = lhdist_min, a_max = lhdist_max))
+        lhdist = 0.5
         s_lh = self.state.s + lhdist
         Xlh = np.interp(s_lh, self.trajstar.s, self.trajstar.X)
         Ylh = np.interp(s_lh, self.trajstar.s, self.trajstar.Y)     

@@ -75,7 +75,7 @@ def get_oval_shape_cl(R_curves,l_straight,l_connect):
     # remove duplicate points
     threshold_dist = 0.1
     # to flip the track
-    flipY = True
+    flipY = False
     if flipY is True:
         Y_cl_tmp = -Y_cl_tmp
     X_cl = []
@@ -191,17 +191,17 @@ elif(track_name == "SVEA_track"):
       "utm_letter": 'V'
     }
           
-    l_straight = 10#5
-    l_connect = 4 #2
-    R_corners = 2 #1.5
-    lanewidth = 0.5 #0.3
+    l_straight = 5
+    l_connect = 2
+    R_corners = 1.5
+    lanewidth = 0.3
     X_cl_, Y_cl_ = get_oval_shape_cl(R_corners,l_straight, l_connect)
  
     # rotate track to origin pose utm
     
     rotangle = 0.3*np.pi
-    X_cl = (X_cl_*np.cos(rotangle) - Y_cl_*np.sin(rotangle))*1
-    Y_cl = (Y_cl_*np.cos(rotangle) + X_cl_*np.sin(rotangle))*1
+    X_cl = (X_cl_*np.cos(rotangle) - Y_cl_*np.sin(rotangle))*(1.5)
+    Y_cl = (Y_cl_*np.cos(rotangle) + X_cl_*np.sin(rotangle))*(1.5)
     
 
 
