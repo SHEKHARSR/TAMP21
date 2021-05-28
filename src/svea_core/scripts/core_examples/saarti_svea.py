@@ -56,7 +56,7 @@ class Tamp_svea:
         self.use_rviz = rospy.get_param(use_rviz_param, False)
         self.use_matplotlib = rospy.get_param(use_matplotlib_param, False)
 
-        #This subscribes to trajectory updates 
+        #This subscribes to ctrl node
         #TODO
         control_update_sub = rospy.Subscriber('/lli/ctrl_request', lli_ctrl, self.callback_ctrl_interface)
 
@@ -92,23 +92,27 @@ class Tamp_svea:
 
     # simualtion loop
 
-    while not svea.is_finished and not rospy.is_shutdown():
-        state = svea.wait_for_state()
+        while not svea.is_finished and not rospy.is_shutdown():
+            state = svea.wait_for_state()
 
     # get control input via control interface node
-        self.get_steering  = steering 
-        self.get_velocity  = velocity 
-        svea.send_control(steering, velocity)
+            self.get_steering  = steering 
+            self.get_velocity  = velocity 
+            svea.send_control(steering, velocity)
 
         # visualize data
-        if use_matplotlib or use_rviz:
-            svea.visualize_data()
-        else:
-            rospy.loginfo_throttle(1, state)
+            if use_matplotlib or use_rviz:
+                svea.visualize_data()
+            else:
+                rospy.loginfo_throttle(1, state)
 
-    if not rospy.is_shutdown():
-        rospy.loginfo("Trajectory finished!")
+        if not rospy.is_shutdown():
+            rospy.loginfo("Trajectory finished!")
 
-    rospy.spin()
+        rospy.spin()
 if __name__ == '__main__':
-    main()
+    try:
+        node_name = Tamp_svea()
+        node_name.run()
+    except rospy.ROSInterruptException:
+        pass
