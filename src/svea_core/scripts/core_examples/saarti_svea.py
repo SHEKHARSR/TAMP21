@@ -8,7 +8,8 @@ from svea.localizers import LocalizationInterface
 from svea.data import BasicDataHandler, TrajDataHandler, RVIZPathHandler
 from svea.models.bicycle import SimpleBicycleModel
 from svea.simulators.sim_SVEA_copy import SimSVEA
-
+from svea_msgs.msg import lli_ctrl
+from svea_msgs.msg import lli_emergency
 from svea.svea_managers.tamp_svea import TAMP_svea_manager
 
 ## SIMULATION PARAMS ##########################################################
@@ -64,12 +65,12 @@ class Tamp_svea:
 
 
     # select data handler based on the ros params
-        if use_rviz:
+        if self.use_rviz:
             DataHandler = RVIZPathHandler
         else :
             DataHandler = TrajDataHandler
 
-        if is_sim:
+        if self.is_sim:
         # start the simulation
             model_for_sim = SimpleBicycleModel(start_pt)
             simulator = SimSVEA(model_for_sim, vehicle_name,dt=dt, run_lidar=False, start_paused=True).start()
@@ -84,25 +85,25 @@ class Tamp_svea:
     def run(self):        # start TAMP SVEA manager
         svea = TAMP_svea_manager(vehicle_name, LocalizationInterface,
                                  PurePursuitController, traj_x, traj_y, data_handler=DataHandler)
-        svea.start(wait=True)
+        self.svea.start(wait=True)
 
-        if is_sim:
+        if self.is_sim:
             # start simulation
-            simulator.toggle_pause_simulation()
+            self.simulator.toggle_pause_simulation()
 
     # simualtion loop
 
-        while not svea.is_finished and not rospy.is_shutdown():
-            state = svea.wait_for_state()
+        while not self.svea.is_finished and not rospy.is_shutdown():
+            state = self.svea.wait_for_state()
 
     # get control input via control interface node
             self.get_steering  = steering 
             self.get_velocity  = velocity 
-            svea.send_control(steering, velocity)
+            self.svea.send_control(steering, velocity)
 
         # visualize data
-            if use_matplotlib or use_rviz:
-                svea.visualize_data()
+            if self.use_matplotlib or self.use_rviz:
+                self.svea.visualize_data()
             else:
                 rospy.loginfo_throttle(1, state)
 

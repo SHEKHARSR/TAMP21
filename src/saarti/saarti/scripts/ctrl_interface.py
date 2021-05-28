@@ -14,7 +14,6 @@
 # swithches controller and output topic based on the "system_setup" param
 # system_setup = rhino_real -> /OpenDLV/ActuationRequest
 # system_setup = rhino_fssim or gotthard_fssim -> /fssim/cmd
-
 import numpy as np
 import rospy
 from common.msg import Trajectory
@@ -40,7 +39,7 @@ from svea.models.bicycle import SimpleBicycleModel
 from svea.simulators.sim_SVEA import SimSVEA
 from svea_msgs.msg import lli_ctrl
 from svea_msgs.msg import lli_emergency
-import actuation
+#import actuation 
 # from svea_msgs.msg import lli_encoder #Need to change wheels with encoder
 ### ::::::SVEA:::::
 
@@ -74,10 +73,9 @@ class CtrlInterface:
         elif(self.system_setup == "SVEA" or self.system_setup == "SVEA"):
             from svea_msgs.msg import lli_ctrl
             from svea_msgs.msg import lli_emergency
-            import actuation
+            #import actuation 
             self.svea_pub = rospy.Publisher('/lli/ctrl_actuated', lli_ctrl, queue_size=1)
             self.svea_pub = rospy.Publisher('/lli/ctrl_request', lli_ctrl, queue_size=1)
-            self.svea = svea_update() 
         
 
 
@@ -211,14 +209,13 @@ class CtrlInterface:
                 self.cmd.dc = dc_out
             
             # publish
-            self.cmdpub.publish(self.cmd)
+                self.cmdpub.publish(self.cmd)
 
             # publish tuning info
             #self.vx_errorpub.publish(self.vx_error)
 
-            self.rate.sleep()
-            elif (self.system_setup == 'SVEA'):
-                #TODO Emergency conditions for saturations
+                self.rate.sleep()
+            elif(self.system_setup == "SVEA"):
                 self.lli_ctrl.steering = delta_out
                 self.lli_ctrl.velocity = dc_out
             self.svea_pub.publish(self.lli_ctrl)
