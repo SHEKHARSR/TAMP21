@@ -6,8 +6,8 @@
     <arg name="use_rviz" default="true"/>
     <arg name="use_matplotlib" default="false"/>
     <arg name="is_sim" default="true"/>
-    <!-- <arg name="map_file" default="$(find svea_core)/resources/maps/floor2.yaml" /> -->
-    <arg name="map_file" default="$(find svea_core)/resources/maps/itrl.yaml" />
+    <arg name="map_file" default="$(find svea_core)/resources/maps/floor2.yaml" />
+    <!-- <arg name="map_file" default="$(find svea_core)/resources/maps/itrl.yaml" /> -->
     
     
 
@@ -22,11 +22,8 @@
     <rosparam command="load" file="$(find svea_core)/resources/params/race_track_sim_obstacles.yaml" />
     <rosparam command="load" file="$(find svea_core)/resources/params/track_q1.yaml" />
     
-    
-    
-    
 
-    <node pkg="svea_core" type="saarti_svea.py" name="floor2_example" output="screen">
+    <node pkg="svea_core" type="saarti_svea.py" name="saarti_tamp_node" output="screen">
         <param name="start_pt" value="$(arg start_pt)"/>
         <param name="use_rviz" value="$(arg use_rviz)"/>
         <param name="use_matplotlib" value="$(arg use_matplotlib)"/>

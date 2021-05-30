@@ -12,8 +12,6 @@ from svea.models.bicycle import SimpleBicycleModel
 from svea.simulators.sim_SVEA_copy import SimSVEA
 from svea.track import Track
 
-from 
-
 ## SIMULATION PARAMS ##########################################################
 vehicle_name = ""
 target_velocity = 3.1 # [m/s]
@@ -94,11 +92,6 @@ def main():
         # compute control input via pure pursuit
         steering, velocity = svea.compute_control()
         svea.send_control(steering, velocity)
-        
-        # compute control input via control interface
-        #TODO write subscriber to the saarti node
-        #steering, velocity = saarti.saarti.compute_control()
-        #svea.send_control(steering, velocity)
 
         # visualize data
         if use_matplotlib or use_rviz:

@@ -3,6 +3,9 @@
 import rospy
 import numpy as np
 
+from svea.svea_managers.tamp_svea import TAMP_svea_manager
+from svea.svea_managers.path_following_sveas import SVEAPurePursuit
+from svea.controllers.tamp_control import TAMPController
 from svea.states import VehicleState
 from svea.localizers import LocalizationInterface
 from svea.data import BasicDataHandler, TrajDataHandler, RVIZPathHandler
@@ -10,8 +13,6 @@ from svea.models.bicycle import SimpleBicycleModel
 from svea.simulators.sim_SVEA_copy import SimSVEA
 from svea_msgs.msg import lli_ctrl
 from svea_msgs.msg import lli_emergency
-from svea.svea_managers.tamp_svea import TAMP_svea_manager
-
 ## SIMULATION PARAMS ##########################################################
 vehicle_name = ""
 target_velocity = 3.1  # [m/s]
@@ -54,37 +55,36 @@ class Tamp_svea:
             start_pt = VehicleState(*start_pt)
 
         self.is_sim = rospy.get_param(is_sim_param, True)
-        self.use_rviz = rospy.get_param(use_rviz_param, False)
-        self.use_matplotlib = rospy.get_param(use_matplotlib_param, False)
+        self.use_rviz = rospy.get_param(use_rviz_param, True)
+        self.use_matplotlib = rospy.get_param(use_matplotlib_param, True)
 
         #This subscribes to ctrl node
         #TODO
         control_update_sub = rospy.Subscriber('/lli/ctrl_request', lli_ctrl, self.callback_ctrl_interface)
+        control_update_sub = rospy.Subscriber('/lli/ctrl_actuated', lli_ctrl, self.callback_ctrl_interface_actuated)
 
-
-
-
-    # select data handler based on the ros params
-        if self.use_rviz:
-            DataHandler = RVIZPathHandler
-        else :
-            DataHandler = TrajDataHandler
 
         if self.is_sim:
         # start the simulation
             model_for_sim = SimpleBicycleModel(start_pt)
-            simulator = SimSVEA(model_for_sim, vehicle_name,dt=dt, run_lidar=False, start_paused=True).start()
+            self.simulator = SimSVEA(model_for_sim, vehicle_name,dt=dt, run_lidar=True, start_paused=True).start()
 
 
     def callback_ctrl_interface(self,lli_ctrl):
-        self.get_steering = lli_ctrl.msg.steering
-        self.get_velocity = lli_ctrl.msg.velocity
+        self.get_steering = lli_ctrl.steering
+        self.get_velocity = lli_ctrl.velocity
+    
+    def callback_ctrl_interface_actuated(self,lli_ctrl):
+        self.get_steering = lli_ctrl.steering
+        self.get_velocity = lli_ctrl.velocity
 
 
 
-    def run(self):        # start TAMP SVEA manager
-        svea = TAMP_svea_manager(vehicle_name, LocalizationInterface,
-                                 PurePursuitController, traj_x, traj_y, data_handler=DataHandler)
+    def run_main(self):        # start TAMP SVEA manager
+        self.svea = TAMP_svea_manager(vehicle_name,
+                           LocalizationInterface,
+                           TAMPController,
+                           traj_x, traj_y)
         self.svea.start(wait=True)
 
         if self.is_sim:
@@ -92,16 +92,17 @@ class Tamp_svea:
             self.simulator.toggle_pause_simulation()
 
     # simualtion loop
-
+        #self.svea.controller.target_velocity = target_velocity
         while not self.svea.is_finished and not rospy.is_shutdown():
             state = self.svea.wait_for_state()
 
-    # get control input via control interface node
-            self.get_steering  = steering 
-            self.get_velocity  = velocity 
+            # get control input via control interface node
+            steering = self.get_steering
+            velocity = self.get_velocity 
+            self.svea.get_control(steering, velocity)
             self.svea.send_control(steering, velocity)
 
-        # visualize data
+            # visualize data
             if self.use_matplotlib or self.use_rviz:
                 self.svea.visualize_data()
             else:
@@ -114,6 +115,6 @@ class Tamp_svea:
 if __name__ == '__main__':
     try:
         node_name = Tamp_svea()
-        node_name.run()
+        node_name.run_main()
     except rospy.ROSInterruptException:
         pass

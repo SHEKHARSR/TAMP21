@@ -3,7 +3,7 @@
 # Descrition: Translates trajstar into vehicle specific control inputs 
 
 # subscribes:
-# state from stateestimation node (topic /state)
+# state from state estimation node (topic /state)
 # local path from perception (topic /pathlocal)
 # trajstar from saarti node (topic /trajstar)
 # ctrl_mode from experiment manager (topic /ctrl_mode)
@@ -55,7 +55,7 @@ class CtrlInterface:
         rospy.init_node('ctrl_interface', anonymous=True)
         self.trajstarsub = rospy.Subscriber("trajstar", Trajectory, self.trajstar_callback)
         self.pathlocalsub = rospy.Subscriber("pathlocal", Path, self.pathlocal_callback)
-        self.state_sub = rospy.Subscriber("/state", State, self.state_callback)
+        self.state_sub = rospy.Subscriber("/state_", State, self.state_callback)
         self.ctrlmodesub = rospy.Subscriber("ctrl_mode", Int16, self.ctrl_mode_callback)
         self.vxrefsub = rospy.Subscriber("vxref", Float32, self.vxref_callback)
         self.lhptpub = rospy.Publisher('/lhpt_vis', Marker, queue_size=1)
@@ -216,8 +216,8 @@ class CtrlInterface:
 
                 self.rate.sleep()
             elif(self.system_setup == "SVEA"):
-                self.lli_ctrl.steering = delta_out
-                self.lli_ctrl.velocity = dc_out
+                self.lli_ctrl.steering = steering #delta_out
+                self.lli_ctrl.velocity = velocity #dc_out
             self.svea_pub.publish(self.lli_ctrl)
             
 
