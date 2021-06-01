@@ -4,6 +4,8 @@ from svea_msgs.msg import lli_ctrl
 from svea_msgs.msg import lli_emergency
 
 class TAMPController(object):
+    steering = 0
+    velocity = 0
 
     def __init__(self, vehicle_name=''):
         self.traj_x = []
@@ -14,8 +16,8 @@ class TAMPController(object):
         self.last_index = 0
         self.is_finished = False
         self.last_time = 0.0
-        control_update_sub = rospy.Subscriber('/lli/ctrl_request', lli_ctrl, self.callback_ctrl_interface)
-        control_update_sub = rospy.Subscriber('/lli/ctrl_actuated', lli_ctrl, self.callback_ctrl_interface_actuated)
+        self.control_update_sub = rospy.Subscriber('/lli/ctrl_request', lli_ctrl, self.callback_ctrl_interface)
+        self.control_update_sub = rospy.Subscriber('/lli/ctrl_actuated', lli_ctrl, self.callback_ctrl_interface_actuated)
     
     def callback_ctrl_interface(self,lli_ctrl):
         self.get_steering = lli_ctrl.steering
@@ -26,9 +28,9 @@ class TAMPController(object):
         self.get_velocity = lli_ctrl.velocity
 
     def get_control(self):
-        self.get_steering =  steering
-        self.get_velocity= velocity
-        return steering, velocity         
+        steering = self.get_steering
+        velocity = self.get_velocity 
+        return self.steering, self.velocity         
     def find_target(self, state):
         ind = self._calc_target_index(state)
         tx = self.traj_x[ind]

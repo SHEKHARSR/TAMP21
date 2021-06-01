@@ -631,10 +631,7 @@ class StateEstCart:
         self.state_out.Fzr = Fzr 
         self.state_out.header.stamp = rospy.Time.now()
         self.statepub.publish(self.state_out)
-        self.received_svea_state = True
-        #TODO write actual callback from sensors 
-        
-
+        self.received_svea_state = True 
     ### ::::::SVEA:::::
 
 if __name__ == '__main__':

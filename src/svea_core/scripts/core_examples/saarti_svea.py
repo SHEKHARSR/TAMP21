@@ -60,8 +60,8 @@ class Tamp_svea:
 
         #This subscribes to ctrl node
         #TODO
-        control_update_sub = rospy.Subscriber('/lli/ctrl_request', lli_ctrl, self.callback_ctrl_interface)
-        control_update_sub = rospy.Subscriber('/lli/ctrl_actuated', lli_ctrl, self.callback_ctrl_interface_actuated)
+        #control_update_sub = rospy.Subscriber('/lli/ctrl_request', lli_ctrl, self.callback_ctrl_interface)
+        #control_update_sub = rospy.Subscriber('/lli/ctrl_actuated', lli_ctrl, self.callback_ctrl_interface_actuated)
 
 
         if self.is_sim:
@@ -92,14 +92,15 @@ class Tamp_svea:
             self.simulator.toggle_pause_simulation()
 
     # simualtion loop
-        #self.svea.controller.target_velocity = target_velocity
+        self.svea.controller.target_velocity = target_velocity
         while not self.svea.is_finished and not rospy.is_shutdown():
             state = self.svea.wait_for_state()
 
             # get control input via control interface node
-            steering = self.get_steering
-            velocity = self.get_velocity 
-            self.svea.get_control(steering, velocity)
+            #steering = self.get_steering
+            #velocity = self.get_velocity
+            #self.svea.get_control()
+            steering, velocity = self.svea.get_control()
             self.svea.send_control(steering, velocity)
 
             # visualize data
