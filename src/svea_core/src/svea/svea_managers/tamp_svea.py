@@ -8,14 +8,14 @@ from math import cos, sin, sqrt
 
 from svea_archetypes import SVEAManager
 from path_following_sveas import SVEAPurePursuit
-from svea.data import TrajDataHandler
+from svea.data import BasicDataHandler, TrajDataHandler, RVIZPathHandler
 
-class TAMP_svea_manager(SVEAPurePursuit):
+class TAMP_svea_manager(SVEAManager):
     """ Container for TAMP_SVEA"""
     steering = 0
     velocity = 0
 
-    def __init__(self, vehicle_name, localizer, controller,traj_x, traj_y, data_handler=TrajDataHandler):
+    def __init__(self, vehicle_name, localizer, controller,traj_x, traj_y, data_handler = RVIZPathHandler):
         SVEAManager.__init__(self, vehicle_name, localizer, controller,
                                    data_handler=data_handler)
 
@@ -31,6 +31,32 @@ class TAMP_svea_manager(SVEAPurePursuit):
         #velocity = #self.get_velocity 
         return self.steering,self.velocity
     
+
+    def goto_pt(self, pt):
+        """Compute control to go to single point, taking advantage of
+        the pure-pursuit controller
+
+        :param pt: Point to go to
+        :type pt: tuple
+        :return: Computed steering and velocity inputs from pure-pursuit
+                 algorithm
+        :rtype: float, float
+        """
+        curr_xy = [self.state.x, self.state.y]
+        target_xy = (pt[0], pt[1])
+        dist = math.sqrt((curr_xy[0] - target_xy[0])**2
+                         + (curr_xy[1] - target_xy[1])**2)
+
+        if dist > self.goto_thresh:
+            steering, velocity = \
+                self.controller.compute_control(self.state, target_xy)
+            self.data_handler.update_target(self.controller.target)
+            return steering, velocity
+        else:
+            steering = 0.0
+            velocity = 0.0
+            return steering, velocity
+
     def update_traj(self, traj_x, traj_y):
         """Update trajectory
 
@@ -49,15 +75,3 @@ class TAMP_svea_manager(SVEAPurePursuit):
     def is_finished(self):
         """Check if pure-pursuit controller is finished or not"""
         return self.controller.is_finished
-
-
-
-
-        
-
-    
-
-
-
-
-

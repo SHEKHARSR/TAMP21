@@ -64,6 +64,7 @@ class Tamp_svea:
         #control_update_sub = rospy.Subscriber('/lli/ctrl_actuated', lli_ctrl, self.callback_ctrl_interface_actuated)
 
 
+        
         if self.is_sim:
         # start the simulation
             model_for_sim = SimpleBicycleModel(start_pt)
@@ -104,7 +105,8 @@ class Tamp_svea:
             self.svea.send_control(steering, velocity)
 
             # visualize data
-            if self.use_matplotlib or self.use_rviz:
+            #self.use_matplotlib or
+            if self.use_rviz:
                 self.svea.visualize_data()
             else:
                 rospy.loginfo_throttle(1, state)
