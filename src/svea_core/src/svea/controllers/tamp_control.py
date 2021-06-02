@@ -2,7 +2,7 @@ import rospy
 import math
 from svea_msgs.msg import lli_ctrl
 from svea_msgs.msg import lli_emergency
-from svea_msgs.msg import tamp_control
+from svea_msgs.msg import tamp_control as tc
 
 class TAMPController(object):
 
@@ -15,9 +15,11 @@ class TAMPController(object):
         self.last_index = 0
         self.is_finished = False
         self.last_time = 0.0
+        self.recieved_steering = 0.0
+        self.recieved_velocity = 0.0
         #self.control_update_sub = rospy.Subscriber('/lli/ctrl_request', lli_ctrl, self.callback_ctrl_interface)
-        self.control_update_sub = rospy.Subscriber('/Control_signal', tamp_control, self.callback_ctrl_from_tamp)
-        self.tamp_control = tamp_control()
+        self.control_update_sub = rospy.Subscriber('/Control_signal', tc, self.callback_ctrl_from_tamp)
+        #self.tamp_control = tamp_control()
         self.received_tamp_control = False 
         
 
@@ -25,15 +27,15 @@ class TAMPController(object):
         self.get_steering = lli_ctrl.steering
         self.get_velocity = lli_ctrl.velocity"""
     
-    def callback_ctrl_from_tamp(self,tamp_contol):
-        self.get_steering = tamp_control.steering
-        self.get_velocity = tamp_control.velocity
+    def callback_ctrl_from_tamp(self,msg):
+        self.recieved_steering = msg.steering
+        self.recieved_velocity = msg.velocity
         self.received_tamp_control = True
 
     
     def get_control(self):
-        steering = self.tamp_control.steering
-        velocity = self.tamp_control.velocity
+        steering = self.recieved_steering #self.tamp_control.steering
+        velocity = self.recieved_velocity #self.tamp_control.velocity
         return steering,velocity         
     def find_target(self, state):
         ind = self._calc_target_index(state)
