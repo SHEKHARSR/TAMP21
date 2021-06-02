@@ -1,2 +1,2 @@
-int8 steering
-int8 velocity
+float32 steering
+float32 velocity

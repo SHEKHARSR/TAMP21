@@ -77,7 +77,7 @@ class CtrlInterface:
             self.svea_pub = rospy.Publisher('/Control_signal',tamp_control , queue_size=1)
             #self.svea_pub = rospy.Publisher('/lli/ctrl_request', lli_ctrl, queue_size=1)
         
-
+        self.tamp_control = tamp_control()
 
         # set static vehicle params
         self.setStaticParams()

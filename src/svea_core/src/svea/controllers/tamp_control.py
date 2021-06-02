@@ -32,8 +32,8 @@ class TAMPController(object):
 
     
     def get_control(self):
-        steering = tamp_control.steering
-        velocity = tamp_control.velocity
+        steering = self.tamp_control.steering
+        velocity = self.tamp_control.velocity
         return steering,velocity         
     def find_target(self, state):
         ind = self._calc_target_index(state)
