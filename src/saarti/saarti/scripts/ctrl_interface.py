@@ -38,7 +38,7 @@ from svea.data import BasicDataHandler, TrajDataHandler, RVIZPathHandler
 from svea.models.bicycle import SimpleBicycleModel
 from svea.simulators.sim_SVEA import SimSVEA
 from svea_msgs.msg import lli_ctrl
-from svea_msgs.msg import lli_emergency
+from svea_msgs.msg import tamp_control
 #import actuation 
 # from svea_msgs.msg import lli_encoder #Need to change wheels with encoder
 ### ::::::SVEA:::::
@@ -72,10 +72,10 @@ class CtrlInterface:
             self.cmd = FssimCmd()
         elif(self.system_setup == "SVEA" or self.system_setup == "SVEA"):
             from svea_msgs.msg import lli_ctrl
-            from svea_msgs.msg import lli_emergency
+            from svea_msgs.msg import tamp_control
             #import actuation 
-            self.svea_pub = rospy.Publisher('/lli/ctrl_actuated', lli_ctrl, queue_size=1)
-            self.svea_pub = rospy.Publisher('/lli/ctrl_request', lli_ctrl, queue_size=1)
+            self.svea_pub = rospy.Publisher('/Control_signal',tamp_control , queue_size=1)
+            #self.svea_pub = rospy.Publisher('/lli/ctrl_request', lli_ctrl, queue_size=1)
         
 
 
@@ -216,9 +216,12 @@ class CtrlInterface:
 
                 self.rate.sleep()
             elif(self.system_setup == "SVEA"):
-                self.lli_ctrl.steering = steering #delta_out
-                self.lli_ctrl.velocity = velocity #dc_out
-            self.svea_pub.publish(self.lli_ctrl)
+                self.tamp_control.steering = delta_out
+                self.tamp_control.velocity = dc_out
+
+                """self.lli_ctrl.steering = steering #delta_out
+                self.lli_ctrl.velocity = velocity #dc_out"""
+                self.svea_pub.publish(self.tamp_control)
             
 
 

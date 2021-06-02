@@ -13,7 +13,7 @@ from svea.data import BasicDataHandler, TrajDataHandler, RVIZPathHandler
 class TAMP_svea_manager(SVEAManager):
     """ Container for TAMP_SVEA"""
     steering = 0
-    velocity = 0
+    velocity = 3.1
 
     def __init__(self, vehicle_name, localizer, controller,traj_x, traj_y, data_handler = RVIZPathHandler):
         SVEAManager.__init__(self, vehicle_name, localizer, controller,
@@ -25,11 +25,32 @@ class TAMP_svea_manager(SVEAManager):
         #goto
         self.goto_thresh = 0.05  # m
         self.goto_vel = 0.6  # m/s
-    def get_control(self):
+    def get_control(self,state = None):
         """To get published inputes from ctrl node """
+        self.controller.get_control(self)
         #steering = #self.get_steering
         #velocity = #self.get_velocity 
         return self.steering,self.velocity
+    
+    def compute_control(self, state=None):
+        """Compute control for path-following using pure-pursuit
+
+        :param state: State used to compute control; if no state is
+                      given as an argument, self.state is automatically
+                      used instead, defaults to None
+        :type state: VehicleState, or None
+
+        :return: Computed steering and velocity inputs from pure-pursuit
+                 algorithm
+        :rtype: float, float
+        """
+        if state is None:
+            steering, velocity = self.controller.compute_control(self.state)
+            self.data_handler.update_target(self.controller.target)
+        else:
+            steering, velocity = self.controller.compute_control(state)
+            self.data_handler.update_target(self.controller.target)
+        return steering, velocity
     
 
     def goto_pt(self, pt):

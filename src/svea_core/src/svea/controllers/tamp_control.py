@@ -2,10 +2,9 @@ import rospy
 import math
 from svea_msgs.msg import lli_ctrl
 from svea_msgs.msg import lli_emergency
+from svea_msgs.msg import tamp_control
 
 class TAMPController(object):
-    steering = 0
-    velocity = 0
 
     def __init__(self, vehicle_name=''):
         self.traj_x = []
@@ -16,21 +15,26 @@ class TAMPController(object):
         self.last_index = 0
         self.is_finished = False
         self.last_time = 0.0
-        self.control_update_sub = rospy.Subscriber('/lli/ctrl_request', lli_ctrl, self.callback_ctrl_interface)
-        self.control_update_sub = rospy.Subscriber('/lli/ctrl_actuated', lli_ctrl, self.callback_ctrl_interface_actuated)
-    
-    def callback_ctrl_interface(self,lli_ctrl):
-        self.get_steering = lli_ctrl.steering
-        self.get_velocity = lli_ctrl.velocity
-    
-    def callback_ctrl_interface_actuated(self,lli_ctrl):
-        self.get_steering = lli_ctrl.steering
-        self.get_velocity = lli_ctrl.velocity
+        #self.control_update_sub = rospy.Subscriber('/lli/ctrl_request', lli_ctrl, self.callback_ctrl_interface)
+        self.control_update_sub = rospy.Subscriber('/Control_signal', tamp_control, self.callback_ctrl_from_tamp)
+        self.tamp_control = tamp_control()
+        self.received_tamp_control = False 
+        
 
+    """def callback_ctrl_interface(self,lli_ctrl):
+        self.get_steering = lli_ctrl.steering
+        self.get_velocity = lli_ctrl.velocity"""
+    
+    def callback_ctrl_from_tamp(self,tamp_contol):
+        self.get_steering = tamp_control.steering
+        self.get_velocity = tamp_control.velocity
+        self.received_tamp_control = True
+
+    
     def get_control(self):
-        steering = self.get_steering
-        velocity = self.get_velocity 
-        return self.steering, self.velocity         
+        steering = tamp_control.steering
+        velocity = tamp_control.velocity
+        return steering,velocity         
     def find_target(self, state):
         ind = self._calc_target_index(state)
         tx = self.traj_x[ind]
