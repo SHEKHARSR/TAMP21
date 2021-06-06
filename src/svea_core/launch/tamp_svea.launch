@@ -3,6 +3,7 @@
 
     <!-- <arg name="start_pt" default= '-7.43, -15.3, 0.8978652, 0'/> -->
     <arg name="start_pt" default= '0.93, 1.63, 0.897652, 0'/>
+    <!-- <arg name="start_pt" default= '0.0, 0.0, 0.0, 0'/> -->
     <arg name="use_rviz" default="true"/>
     <arg name="use_matplotlib" default="false"/>
     <arg name="is_sim" default="true"/>
@@ -45,7 +46,7 @@
     
         <!-- saarti nodes -->
     <rosparam command="load" file="$(find saarti)/config/planning_and_ctrl_config.yaml" /> 
-    <arg name="exp_config" default="asta_reduced_mu_turn_config.yaml"/>
+    <arg name="exp_config" default="SVEA_config.yaml"/>
     <rosparam command="load" file="$(find common)/config/exp_config/$(arg exp_config)" />
     <node pkg="saarti" type="saarti_node" name="saarti_node"/> 
     <node pkg="saarti" type="ctrl_interface.py" name="ctrl_interface"/>
@@ -53,12 +54,12 @@
     <!-- experiment manager node -->
     <!-- <node pkg="common" type="exp_manager.py" name="experiment_manager"  required="true"> </node> -->
 
-  <include file="$(find svea_core)/launch/exp_manager.launch" />
+    <include file="$(find svea_core)/launch/exp_manager.launch" />
     <group unless="$(eval is_sim == true)">
-	<node pkg="rosserial_python" type="serial_node.py" name="serial_node">
+	    <node pkg="rosserial_python" type="serial_node.py" name="serial_node">
              <param name="port" value="/dev/ttyACM0"/>
              <param name="baud" value="250000"/>
-	</node>
+	    </node>
         <include file="$(find svea_sensors)/launch/localize.launch">
             <arg name="use_rs" value="true"/>
             <arg name="file_name" value="$(arg map_file)"/>
