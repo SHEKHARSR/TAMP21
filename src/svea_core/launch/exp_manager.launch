@@ -10,7 +10,8 @@
     <rosparam command="load" file="$(find common)/config/vehicles/$(arg robot_name)/config/car.yaml" />
     <param name="track_name" type="string" value="$(arg track_name)" />	 
     <rosparam command="load" file="$(find saarti)/config/planning_and_ctrl_config.yaml" /> 
-    <arg name="exp_config" default="asta_reduced_mu_turn_config.yaml"/>
+    <!-- <arg name="exp_config" default="asta_reduced_mu_turn_config.yaml"/> -->
+    <arg name="exp_config" default="SVEA_config.yaml"/>
     <rosparam command="load" file="$(find common)/config/exp_config/$(arg exp_config)" />
     <!-- experiment manager node -->
     <node pkg="common" type="exp_manager.py" name="experiment_manager"  required="true" output="screen" > </node>

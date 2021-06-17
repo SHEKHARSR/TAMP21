@@ -217,10 +217,9 @@ class CtrlInterface:
                 self.rate.sleep()
             elif(self.system_setup == "SVEA"):
                 self.tamp_control.steering = delta_out
+                if dc_out < 0.0:
+                    dc_out = 0.0
                 self.tamp_control.velocity = dc_out
-
-                """self.lli_ctrl.steering = steering #delta_out
-                self.lli_ctrl.velocity = velocity #dc_out"""
                 self.svea_pub.publish(self.tamp_control)
             
 

@@ -29,17 +29,17 @@ from coordinate_transforms import ptsFrenetToCartesian
 
 
 ### ::::::SVEA:::::
-from svea.svea_managers import svea_archetypes
+from svea.svea_managers.tamp_svea import TAMP_svea_manager
+from svea.svea_managers.path_following_sveas import SVEAPurePursuit
+from svea.controllers.tamp_control import TAMPController
 from svea.states import VehicleState
-from svea.states import *
-from geometry_msgs.msg import TwistWithCovarianceStamped
-from nav_msgs.msg import Odometry
 from svea.localizers import LocalizationInterface
-from svea.controllers.pure_pursuit import PurePursuitController
 from svea.data import BasicDataHandler, TrajDataHandler, RVIZPathHandler
 from svea.models.bicycle import SimpleBicycleModel
-from svea.simulators.sim_SVEA import SimSVEA
-#from svea.track import Track
+from svea.simulators.sim_SVEA_copy import SimSVEA
+from svea_msgs.msg import lli_ctrl
+from svea_msgs.msg import lli_emergency
+from svea_msgs.msg import tamp_control as tc
 ### ::::::SVEA:::::
 
 class ExperimentManager:

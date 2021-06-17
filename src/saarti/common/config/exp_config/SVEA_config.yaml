@@ -30,10 +30,12 @@ obstacle_wiggleroom: 1.0
 #vxref_segment_values: [15.0, 10.0, 5.0]
 
 # low friction run (asta_zero_long)
-s_begin_mu_segments:  [0.0, 230.0, 330.0]
-mu_segment_values:  [0.8, 0.4, 0.8] 
-s_begin_vxref_segments: [0.0, 315.0, 600.0]
-vxref_segment_values: [0, 0, 0]
+s_begin_mu_segments:  [0.0]
+mu_segment_values:  [0.8] 
+#s_begin_vxref_segments: [0.0, 11.0, 15.0]
+s_begin_vxref_segments: [0.0]
+#vxref_segment_values: [3.6, 2.0, 1.5]
+vxref_segment_values: [3]
 
 # low friction run (asta_zero_short)
 #s_begin_mu_segments:  [0.0, 235.0, 295.0]
