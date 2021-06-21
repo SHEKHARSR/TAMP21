@@ -277,8 +277,9 @@ class StateEstCart:
         while not rospy.is_shutdown():
             
             # timing
+        
             start = time.time()
-            
+            """
             # state estimation
             if (self.system_setup == "rhino_real"):
                 self.update_rhino_state()
@@ -346,7 +347,7 @@ class StateEstCart:
             self.Fyf_vis_pub.publish(self.getForceArrowMarker(np.pi/2., Fyf_est/1000.,0))
             self.Fyr_vis_pub.publish(self.getForceArrowMarker(np.pi/2., Fyr_est/1000.,3.4))
             self.Fx_vis_pub.publish(self.getForceArrowMarker(0, (Fxf_est+Fxr_est)/1000.,1.2))
-          
+            """
             # broadcast tf
             start_tfbc = time.time()
             self.broadcast_dyn_tfs()
@@ -361,7 +362,7 @@ class StateEstCart:
                 rospy.logwarn("state_est_cart: compute time exceeding dt!")
                 rospy.logwarn("state_est_cart: total comptime =        " + str(comptime))
                 rospy.logwarn("state_est_cart: comptime tf broadcast = " + str(comptime_tfbc))           
-                        
+                       
             self.rate.sleep()
 
     def update_rhino_state(self):

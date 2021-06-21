@@ -45,7 +45,9 @@
     <node pkg="perception" type="road_perception.py" name="road_perception"> </node> 
     
         <!-- saarti nodes -->
-    <rosparam command="load" file="$(find saarti)/config/planning_and_ctrl_config.yaml" /> 
+    <!-- <rosparam command="load" file="$(find saarti)/config/planning_and_ctrl_config.yaml" />  -->
+    <!-- <arg name="exp_config" default="asta_reduced_mu_turn_config.yaml"/> -->
+
     <arg name="exp_config" default="SVEA_config.yaml"/>
     <rosparam command="load" file="$(find common)/config/exp_config/$(arg exp_config)" />
     <node pkg="saarti" type="saarti_node" name="saarti_node"/> 

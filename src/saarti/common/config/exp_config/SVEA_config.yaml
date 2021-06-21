@@ -30,12 +30,12 @@ obstacle_wiggleroom: 1.0
 #vxref_segment_values: [15.0, 10.0, 5.0]
 
 # low friction run (asta_zero_long)
-s_begin_mu_segments:  [0.0]
-mu_segment_values:  [0.8] 
-#s_begin_vxref_segments: [0.0, 11.0, 15.0]
-s_begin_vxref_segments: [0.0]
-#vxref_segment_values: [3.6, 2.0, 1.5]
-vxref_segment_values: [3]
+s_begin_mu_segments:  [0.0, 11.0, 25.0]
+mu_segment_values:  [0.8, 0.4, 0.8] 
+s_begin_vxref_segments: [0.0, 11.0, 25.0]
+#s_begin_vxref_segments: [0.0]
+vxref_segment_values: [10.0,30.0,25.1]
+#vxref_segment_values: [2.0,1.0,2.5]
 
 # low friction run (asta_zero_short)
 #s_begin_mu_segments:  [0.0, 235.0, 295.0]
@@ -99,8 +99,8 @@ conservativeness_level: -1
 Ff_util: 0.9 # sim
 Fr_util: 0.9
 # optimization config
-Wx:  [1.0, 50.0, 0.1, 0.1, 50.0, 0.0001]
-WNx: [1.0, 50.0, 0.1, 0.1, 50.0, 0.0001]
+Wx:  [1.0, 50000.0, 0.1, 0.1, 50.0, 0.0001]
+WNx: [10.0, 500000.0, 1.0, 1.0, 500.0, 0.001]
 Wu: [1.0, 1.0, 1.0]
 Wslack: 100000000
 

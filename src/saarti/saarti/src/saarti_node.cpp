@@ -727,7 +727,7 @@ void SAARTI::state_callback(const common::State::ConstPtr& msg){
     state_.vy = msg->vy;
 
     // curvilinear dynamics breaks when vx == 0 v_th was 1.0
-    float v_th = 0.8;
+    float v_th = 1.0;
     if (state_.vx <= v_th){
         state_.vx = v_th;
     }

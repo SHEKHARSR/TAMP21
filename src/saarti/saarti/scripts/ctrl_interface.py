@@ -355,7 +355,7 @@ class CtrlInterface:
 #        lhdist_psidot = lhdist_min + 1.3/np.max([maxpsidot,0.001]) # 1.3, 1.5 # gauntlet
 #        lhdist_psidot = lhdist_min + 1.5/np.max([maxpsidot,0.001]) # 1.3, 1.5 # obsavoid
         #lhdist = float(np.clip(np.min([lhdist_psidot]), a_min = lhdist_min, a_max = lhdist_max))
-        lhdist = 0.5
+        lhdist = 0.5 #0.5
         s_lh = self.state.s + lhdist
         Xlh = np.interp(s_lh, self.trajstar.s, self.trajstar.X)
         Ylh = np.interp(s_lh, self.trajstar.s, self.trajstar.Y)     
@@ -379,7 +379,7 @@ class CtrlInterface:
                                                Xlh,
                                                Ylh)
                 
-        kin_ff_term = rho_pp*(self.lf + self.lr) * 1.3 # TUNING LAT 1.5
+        kin_ff_term = rho_pp*(self.lf + self.lr) * 2.0 # TUNING LAT 1.5
         
         # lhdist by min rho
 #        N_lh = 10
