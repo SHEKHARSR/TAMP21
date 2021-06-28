@@ -357,7 +357,7 @@ Visualization Manager:
       Marker Topic: /lhpt_vis
       Name: lhpt(look aheah point)
       Namespaces:
-        "": true
+        {}
       Queue Size: 100
       Value: true
     - Class: rviz/Marker
@@ -365,8 +365,15 @@ Visualization Manager:
       Marker Topic: /polyfit_vis
       Name: look ahead arc
       Namespaces:
-        "": true
+        {}
       Queue Size: 100
+      Value: true
+    - Class: rviz/Axes
+      Enabled: true
+      Length: 1
+      Name: Axes
+      Radius: 0.10000000149011612
+      Reference Frame: <Fixed Frame>
       Value: true
   Enabled: true
   Global Options:
@@ -411,10 +418,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.6797969937324524
+      Pitch: 0.789797306060791
       Target Frame: map
       Value: Orbit (rviz)
-      Yaw: 2.672822952270508
+      Yaw: 3.4928252696990967
     Saved:
       - Class: rviz/Orbit
         Distance: 28.243106842041016

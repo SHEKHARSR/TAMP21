@@ -191,17 +191,17 @@ elif(track_name == "SVEA_track"):
       "utm_letter": 'V'
     }
           
-    l_straight = 5
+    l_straight = 4
     l_connect = 2
-    R_corners = 1.5
-    lanewidth = 0.3
+    R_corners = 1.9
+    lanewidth = 0.4
     X_cl_, Y_cl_ = get_oval_shape_cl(R_corners,l_straight, l_connect)
  
     # rotate track to origin pose utm
     
-    rotangle = 0.295*np.pi
-    X_cl = (X_cl_*np.cos(rotangle) - Y_cl_*np.sin(rotangle))*(1.5)
-    Y_cl = (Y_cl_*np.cos(rotangle) + X_cl_*np.sin(rotangle))*(1.5)
+    rotangle = 0.3*np.pi
+    X_cl = (X_cl_*np.cos(rotangle) - Y_cl_*np.sin(rotangle))*(1.5) + 0.5
+    Y_cl = (Y_cl_*np.cos(rotangle) + X_cl_*np.sin(rotangle))*(1.5) - 3.0
     
 
 
@@ -341,10 +341,10 @@ export_as_yaml(track_name, export_path_saarti, dict_track)
 export_as_kml(track_name, export_path_saarti, X_cl,Y_cl,origin_pose_utm)
 print "[INFO] Track generation completed"
 print "[INFO] Track length: " + str(s[-1])
-xcl__ = X_cl.tolist()
-print (xcl__)  
-ycl__ = Y_cl.tolist()
-print (ycl__)  
+#xcl__ = X_cl.tolist()
+#print (xcl__)  
+#ycl__ = Y_cl.tolist()
+#print (ycl__)  
 
 
 
