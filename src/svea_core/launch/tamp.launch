@@ -2,8 +2,7 @@
 <launch>
 
     <!-- <arg name="start_pt" default= '-7.43, -15.3, 0.8978652, 0'/> -->
-    <!-- <arg name="start_pt" default= '0.93, 1.63, 0.897652, 0'/> -->
-    <arg name="start_pt" default= '-1.58, -5.94, 0.8978652, 0'/>
+    <arg name="start_pt" default= '0.93, 1.63, 0.897652, 0'/>
     <arg name="use_rviz" default="true"/>
     <arg name="use_matplotlib" default="false"/>
     <arg name="is_sim" default="true"/>
@@ -23,8 +22,11 @@
     <rosparam command="load" file="$(find svea_core)/resources/params/race_track_sim_obstacles.yaml" />
     <rosparam command="load" file="$(find svea_core)/resources/params/track_q1.yaml" />
     
+    
+    
+    
 
-    <node pkg="svea_core" type="saarti_svea.py" name="saarti_tamp_node" output="screen">
+    <node pkg="svea_core" type="floor2_example.py" name="floor2_example" output="screen">
         <param name="start_pt" value="$(arg start_pt)"/>
         <param name="use_rviz" value="$(arg use_rviz)"/>
         <param name="use_matplotlib" value="$(arg use_matplotlib)"/>
@@ -43,25 +45,20 @@
     <node pkg="perception" type="state_est_cart.py" name="state_est_cart"   > </node>
     <node pkg="perception" type="state_est_frenet.py" name="state_est_frenet" /> 
     <node pkg="perception" type="road_perception.py" name="road_perception"> </node> 
-    
         <!-- saarti nodes -->
-    <!-- <rosparam command="load" file="$(find saarti)/config/planning_and_ctrl_config.yaml" />  -->
-    <!-- <arg name="exp_config" default="asta_reduced_mu_turn_config.yaml"/> -->
-
-    <arg name="exp_config" default="SVEA_config.yaml"/>
+    <rosparam command="load" file="$(find saarti)/config/planning_and_ctrl_config.yaml" /> 
+    <arg name="exp_config" default="asta_reduced_mu_turn_config.yaml"/>
     <rosparam command="load" file="$(find common)/config/exp_config/$(arg exp_config)" />
     <node pkg="saarti" type="saarti_node" name="saarti_node"/> 
-    <node pkg="saarti" type="ctrl_interface.py" name="ctrl_interface"/>
-    
     <!-- experiment manager node -->
     <!-- <node pkg="common" type="exp_manager.py" name="experiment_manager"  required="true"> </node> -->
 
-    <include file="$(find svea_core)/launch/exp_manager.launch" />
+  <include file="$(find svea_core)/launch/exp_manager.launch" />
     <group unless="$(eval is_sim == true)">
-	    <node pkg="rosserial_python" type="serial_node.py" name="serial_node">
+	<node pkg="rosserial_python" type="serial_node.py" name="serial_node">
              <param name="port" value="/dev/ttyACM0"/>
              <param name="baud" value="250000"/>
-	    </node>
+	</node>
         <include file="$(find svea_sensors)/launch/localize.launch">
             <arg name="use_rs" value="true"/>
             <arg name="file_name" value="$(arg map_file)"/>

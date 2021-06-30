@@ -201,7 +201,7 @@ elif(track_name == "SVEA_track"):
     
     rotangle = 0.3*np.pi
     X_cl = (X_cl_*np.cos(rotangle) - Y_cl_*np.sin(rotangle))*(1.5) + 0.5
-    Y_cl = (Y_cl_*np.cos(rotangle) + X_cl_*np.sin(rotangle))*(1.5) - 3.0
+    Y_cl = (Y_cl_*np.cos(rotangle) + X_cl_*np.sin(rotangle))*(1.5) - 3.1
     
 
 

@@ -306,7 +306,7 @@ class ActuationInterface(object):
                      steering=float('nan'),
                      velocity=float('nan'),
                      brake_force=0,
-                     transmission=-1,
+                     transmission= -1,
                      differential_front=-1,
                      differential_rear=-1,
                      ctrl_code=0):

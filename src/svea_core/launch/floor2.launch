@@ -1,68 +1,26 @@
 <?xml version="1.0"?>
 <launch>
 
-    <!-- <arg name="start_pt" default= '-7.43, -15.3, 0.8978652, 0'/> -->
-    <arg name="start_pt" default= '0.93, 1.63, 0.897652, 0'/>
+    <arg name="start_pt" default= '-7.43, -15.3, 0.8978652, 0'/>
     <arg name="use_rviz" default="true"/>
     <arg name="use_matplotlib" default="false"/>
-    <arg name="is_sim" default="true"/>
+    <arg name="is_sim" default="false"/>
     <arg name="map_file" default="$(find svea_core)/resources/maps/floor2.yaml" />
-    <!-- <arg name="map_file" default="$(find svea_core)/resources/maps/itrl.yaml" /> -->
-    
-    
 
     <group if="$(eval is_sim == true)">
         <node type="rviz" name="rviz" pkg="rviz" args="-d $(find svea_core)/resources/rviz/SVEA_floor2.rviz" />
     </group>
 
     <node pkg="map_server" type="map_server" name="map_server" output="screen" args="$(arg map_file)" />
-    <!-- <rosparam command="load" file="$(find svea_core)/resources/params/SVEA_track.yaml" /> -->
-    <!-- <rosparam command="load" file="$(find svea_core)/resources/params/obstacles.yaml" /> -->
-    <!-- <rosparam command="load" file="$(find svea_core)/resources/params/track.yaml" /> -->
-    <rosparam command="load" file="$(find svea_core)/resources/params/race_track_sim_obstacles.yaml" />
-    <rosparam command="load" file="$(find svea_core)/resources/params/track_q1.yaml" />
-    
-    
-    
-    
+    <rosparam command="load" file="$(find svea_core)/resources/params/obstacles.yaml" />
+    <rosparam command="load" file="$(find svea_core)/resources/params/track.yaml" />
 
     <node pkg="svea_core" type="floor2_example.py" name="floor2_example" output="screen">
         <param name="start_pt" value="$(arg start_pt)"/>
         <param name="use_rviz" value="$(arg use_rviz)"/>
         <param name="use_matplotlib" value="$(arg use_matplotlib)"/>
         <param name="is_sim" value="$(arg is_sim)"/>
-    </node> 
-    <rosparam command="load" file="$(find perception)/config/perception_config.yaml" />
-    <arg name="track_name" default="SVEA_track" /> 
-    <arg name="system_setup" default="SVEA" />
-    <arg name="robot_name" default="svea" />
-    <param name="system_setup" type="string" value="$(arg system_setup)" /> 
-    <param name="robot_name" type="string" value="$(arg robot_name)" /> 
-    <rosparam command="load" file="$(find common)/config/vehicles/$(arg robot_name)/config/car.yaml" />
-    <param name="track_name" type="string" value="$(arg track_name)" />	 
-        <!-- road percept, planning & ctrl nodes -->
-    <node pkg="perception" type="track_iface.py" name="track_iface"  />
-    <node pkg="perception" type="state_est_cart.py" name="state_est_cart"   > </node>
-    <node pkg="perception" type="state_est_frenet.py" name="state_est_frenet" /> 
-    <node pkg="perception" type="road_perception.py" name="road_perception"> </node> 
-        <!-- saarti nodes -->
-    <rosparam command="load" file="$(find saarti)/config/planning_and_ctrl_config.yaml" /> 
-    <arg name="exp_config" default="asta_reduced_mu_turn_config.yaml"/>
-    <rosparam command="load" file="$(find common)/config/exp_config/$(arg exp_config)" />
-    <node pkg="saarti" type="saarti_node" name="saarti_node"/> 
-    <!-- experiment manager node -->
-    <!-- <node pkg="common" type="exp_manager.py" name="experiment_manager"  required="true"> </node> -->
+    </node>
 
-  <include file="$(find svea_core)/launch/exp_manager.launch" />
-    <group unless="$(eval is_sim == true)">
-	<node pkg="rosserial_python" type="serial_node.py" name="serial_node">
-             <param name="port" value="/dev/ttyACM0"/>
-             <param name="baud" value="250000"/>
-	</node>
-        <include file="$(find svea_sensors)/launch/localize.launch">
-            <arg name="use_rs" value="true"/>
-            <arg name="file_name" value="$(arg map_file)"/>
-        </include>
-    </group>
 
 </launch>
