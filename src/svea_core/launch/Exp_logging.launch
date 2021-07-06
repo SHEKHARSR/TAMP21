@@ -1,0 +1,76 @@
+<!-- Run logging for single experiment-->
+
+<launch>
+    <!-- logging -->
+    <arg name="record_rosbag" default="true" />
+    <node pkg="rosbag" name="rosbag_record_exp" type="record" if="$(arg record_rosbag )" output="screen"    
+		args="record -O  $(find tamp_logs)/bagfiles/sim_exp/latest --duration=20m
+			/3D_car
+            /Control_signal
+            /Fx_est_vis
+            /Fx_vis
+            /Fyf_est_vis
+            /Fyf_vis
+            /Fyr_est_vis
+            /Fyr_vis
+            /clicked_point
+            /ctrl_mode
+            /dlbglobal_vis
+            /dubglobal_vis
+            /initialpose
+            /lhpt_vis
+            /lhpt_vis_array
+            /lli/ctrl_actuated
+            /lli/ctrl_request
+            /lli/emergency
+            /lli/remote
+            /map
+            /map_metadata
+            /map_updates
+            /move_base_simple/goal
+            /mu_gt
+            /mu_segments
+            /obs
+            /obs_det_vis
+            /obs_undet_vis
+            /origin_pose_utm
+            /past_path
+            /path_plan
+            /pathglobal
+            /pathglobal_vis
+            /pathlocal
+            /pathlocal_vis
+            /polyfit_vis
+            /polyfit_vis_array
+            /posconstr_vis
+            /pose_full_ekf_vis
+            /pose_raw_vis
+            /rosout
+            /rosout_agg
+            /saarti_plot_debug
+            /saarti_status
+            /scan
+            /state
+            /state_
+            /state_cart
+            /state_text_marker
+            /target
+            /tf
+            /tf_static
+            /track/keep_out
+            /track/stay_in
+            /trajhat
+            /trajhat_vis
+            /trajset_vis
+            /trajstar
+            /trajstar_polarr_vis
+            /trajstar_vis
+            /vis_pose
+            /viz_edges
+            /viz_lidar_points
+            /viz_lidar_rays
+            /vx_error_vis
+            /vxref"> 
+    </node>    
+</launch>
+
