@@ -6,6 +6,7 @@ logs/*
 src/CMakeLists.txt
 
 *.pyc
-
+*.bag
+.tamp_logs/
 .vscode/
 src/.vscode/
