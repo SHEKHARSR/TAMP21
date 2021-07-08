@@ -7,6 +7,7 @@ src/CMakeLists.txt
 
 *.pyc
 *.bag
+*.bag.active
 .tamp_logs/
 .vscode/
 src/.vscode/

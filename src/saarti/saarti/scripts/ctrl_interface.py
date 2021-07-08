@@ -33,15 +33,11 @@ from svea.states import *
 from geometry_msgs.msg import TwistWithCovarianceStamped
 from nav_msgs.msg import Odometry
 from svea.localizers import LocalizationInterface
-# from svea.controllers.pure_pursuit import PurePursuitController
 from svea.data import BasicDataHandler, TrajDataHandler, RVIZPathHandler
 from svea.models.bicycle import SimpleBicycleModel
 from svea.simulators.sim_SVEA import SimSVEA
 from svea_msgs.msg import lli_ctrl
 from svea_msgs.msg import tamp_control
-#import actuation 
-# from svea_msgs.msg import lli_encoder #Need to change wheels with encoder
-### ::::::SVEA:::::
 
 
 class CtrlInterface:

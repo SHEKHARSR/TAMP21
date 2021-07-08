@@ -35,7 +35,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: Raw LiDAR
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -76,9 +76,9 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 1678
+      Max Intensity: 2562
       Min Color: 0; 0; 0
-      Min Intensity: 122
+      Min Intensity: 242
       Name: Raw LiDAR
       Position Transformer: XYZ
       Queue Size: 10
@@ -161,7 +161,7 @@ Visualization Manager:
       Buffer Length: 1
       Class: rviz/Path
       Color: 0; 0; 255
-      Enabled: true
+      Enabled: false
       Head Diameter: 0.30000001192092896
       Head Length: 0.20000000298023224
       Length: 0.30000001192092896
@@ -179,7 +179,7 @@ Visualization Manager:
       Shaft Length: 0.10000000149011612
       Topic: /past_path
       Unreliable: false
-      Value: true
+      Value: false
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -369,12 +369,12 @@ Visualization Manager:
       Queue Size: 100
       Value: true
     - Class: rviz/Axes
-      Enabled: true
+      Enabled: false
       Length: 1
       Name: Axes
       Radius: 0.10000000149011612
       Reference Frame: <Fixed Frame>
-      Value: true
+      Value: false
   Enabled: true
   Global Options:
     Background Color: 162; 162; 162
@@ -418,10 +418,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.789797306060791
+      Pitch: 0.5647974014282227
       Target Frame: map
       Value: Orbit (rviz)
-      Yaw: 3.4928252696990967
+      Yaw: 3.0728254318237305
     Saved:
       - Class: rviz/Orbit
         Distance: 28.243106842041016

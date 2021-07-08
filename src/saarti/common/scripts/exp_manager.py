@@ -162,7 +162,7 @@ class ExperimentManager:
         
         # wait for user activation
         raw_input("Press Enter to start experiment...")
-        rospy.loginfo_throttle(1, "I am here")
+        #rospy.loginfo_throttle(1, "I am here")
         
         # main loop
         self.exptime = 0 

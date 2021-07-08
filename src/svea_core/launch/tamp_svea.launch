@@ -6,17 +6,17 @@
     <arg name="start_pt" default= '-0.599, -4.11, 0.8978652, 0'/>
     <arg name="use_rviz" default="true"/>
     <arg name="use_matplotlib" default="true"/>
-    <arg name="is_sim" default="true"/>
+    <arg name="is_sim" default="false"/>
     <arg name="map_file" default="$(find svea_core)/resources/maps/floor2.yaml" />
     <!-- <arg name="map_file" default="$(find svea_core)/resources/maps/itrl.yaml" /> -->
     
     
 
-    <group if="$(eval is_sim == true)">
+    <!-- <group if="$(eval is_sim == true)">
         <node type="rviz" name="rviz" pkg="rviz" args="-d $(find svea_core)/resources/rviz/SVEA_floor2.rviz" />
-    </group>
+    </group> -->
 
-    <node pkg="map_server" type="map_server" name="map_server" output="screen" args="$(arg map_file)" />
+    <!-- <node pkg="map_server" type="map_server" name="map_server" output="screen" args="$(arg map_file)" /> -->
     <!-- <rosparam command="load" file="$(find svea_core)/resources/params/SVEA_track.yaml" /> -->
     <!-- <rosparam command="load" file="$(find svea_core)/resources/params/obstacles.yaml" /> -->
     <!-- <rosparam command="load" file="$(find svea_core)/resources/params/track.yaml" /> -->
@@ -44,6 +44,8 @@
     <node pkg="perception" type="state_est_frenet.py" name="state_est_frenet" /> 
     <node pkg="perception" type="road_perception.py" name="road_perception"> </node> 
     
+     <!-- <node type="rviz" name="rviz" pkg="rviz" args="-d $(find svea_core)/resources/rviz/SVEA_floor2.rviz" /> -->
+    
         <!-- saarti nodes -->
     <!-- <rosparam command="load" file="$(find saarti)/config/planning_and_ctrl_config.yaml" />  -->
     <!-- <arg name="exp_config" default="asta_reduced_mu_turn_config.yaml"/> -->
@@ -59,7 +61,7 @@
 
     <!-- experiment logging -->
 
-    <include file="$(find svea_core)/launch/Exp_logging.launch" />
+    <!-- <include file="$(find svea_core)/launch/Exp_logging.launch" /> -->
 
     <!-- simulation to real setting -->
 
