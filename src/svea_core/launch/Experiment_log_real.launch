@@ -1,0 +1,95 @@
+<!-- Run logging for single experiment-->
+
+<launch>
+    <!-- logging -->
+    <arg name="record_rosbag" default="true" />
+    <node pkg="rosbag" name="rosbag_record_exp" type="record" if="$(arg record_rosbag )" output="screen"    
+		args="record -o  /home/nvidia/svea_starter/tamp_logs/EXP/session --duration=20m
+          /Control_signal
+          /Fx_est_vis
+          /Fx_vis
+          /Fyf_est_vis
+          /Fyf_vis
+          /Fyr_est_vis
+          /Fyr_vis
+          /Hokyoulidar/parameter_descriptions
+          /Hokyoulidar/parameter_updates
+          /actuation_twist
+          /amcl_localization/parameter_descriptions
+          /amcl_localization/parameter_updates
+          /amcl_pose
+          /ctrl_mode
+          /diagnostics
+          /dlbglobal_vis
+          /dubglobal_vis
+          /imu/data
+          /imu/mag
+          /imu/raw
+          /imu/status
+          /imu/temp
+          /initialpose
+          /laser_status
+          /lhpt_vis
+          /lli/ctrl_actuated
+          /lli/ctrl_request
+          /lli/debug
+          /lli/emergency
+          /lli/encoder
+          /lli/remote
+          /map
+          /map_metadata
+          /mu_gt
+          /mu_segments
+          /obs
+          /obs_det_vis
+          /obs_undet_vis
+          /odometry/corrected
+          /odometry/filtered
+          /origin_pose_utm
+          /particlecloud
+          /past_path
+          /path_plan
+          /pathglobal
+          /pathglobal_vis
+          /pathlocal
+          /pathlocal_vis
+          /polyfit_vis
+          /posconstr_vis
+          /pose
+          /pose_full_ekf_vis
+          /pose_raw_vis
+          /rosout
+          /rosout_agg
+          /rs/t265_camera/accel/imu_info
+          /rs/t265_camera/accel/sample
+          /rs/t265_camera/gyro/imu_info
+          /rs/t265_camera/gyro/sample
+          /rs/t265_camera/odom/sample
+          /rs/t265_camera/realsense2_camera_manager/bond
+          /rs/t265_camera/tracking_module/parameter_descriptions
+          /rs/t265_camera/tracking_module/parameter_updates
+          /saarti_plot_debug
+          /saarti_status
+          /scan
+          /set_pose
+          /state
+          /state_
+          /state_cart
+          /state_text_marker
+          /target
+          /tf
+          /tf_static
+          /trajhat
+          /trajhat_vis
+          /trajset_vis
+          /trajstar
+          /trajstar_polarr_vis
+          /trajstar_vis
+          /vis_pose
+          /vx_error_vis
+          /vxref"> 
+    </node>    
+</launch>
+
+
+

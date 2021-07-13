@@ -62,6 +62,9 @@
     <!-- experiment logging -->
 
     <!-- <include file="$(find svea_core)/launch/Exp_logging.launch" /> -->
+    <!-- <include file="$(find svea_core)/launch/Experiment_log_real.launch" /> -->
+
+   
 
     <!-- simulation to real setting -->
 
