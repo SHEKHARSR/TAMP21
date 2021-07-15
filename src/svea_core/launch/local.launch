@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="start_pt" default= '-0.599, -4.11, 0.8978652, 0'/>
+    <arg name="use_rviz" default="true"/>
+    <arg name="use_matplotlib" default="true"/>
+    <arg name="is_sim" default="false"/>
+    <arg name="map_file" default="$(find svea_core)/resources/maps/floor2.yaml" />
+    <!-- <arg name="map_file" default="$(find svea_core)/resources/maps/itrl.yaml" /> -->
+    
+    
+
+
+    <!-- <node type="rviz" name="rviz" pkg="rviz" args="-d $(find svea_core)/resources/rviz/SVEA_floor2.rviz" /> -->
+    <rosparam command="load" file="$(find svea_core)/resources/params/race_track_sim_obstacles.yaml" />
+    <rosparam command="load" file="$(find svea_core)/resources/params/track_q1.yaml" />
+
+    <!-- simulation to real setting -->
+    <node pkg="svea_core" type="saarti_svea.py" name="saarti_tamp_node" output="screen">
+        <param name="start_pt" value="$(arg start_pt)"/>
+        <param name="use_rviz" value="$(arg use_rviz)"/>
+        <param name="use_matplotlib" value="$(arg use_matplotlib)"/>
+        <param name="is_sim" value="$(arg is_sim)"/>
+    </node> 
+
+    <group unless="$(eval is_sim == true)">
+	    <node pkg="rosserial_python" type="serial_node.py" name="serial_node">
+             <param name="port" value="/dev/ttyACM0"/>
+             <param name="baud" value="250000"/>
+	    </node>
+        <include file="$(find svea_sensors)/launch/localize.launch">
+            <arg name="use_rs" value="true"/>
+            <arg name="file_name" value="$(arg map_file)"/>
+        </include>
+    </group>
+
+</launch>

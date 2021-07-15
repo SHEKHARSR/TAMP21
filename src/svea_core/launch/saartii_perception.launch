@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<launch>
+        <rosparam command="load" file="$(find perception)/config/perception_config.yaml" />
+            <arg name="track_name" default="SVEA_track" /> 
+            <arg name="system_setup" default="SVEA" />
+            <arg name="robot_name" default="svea" />
+            <param name="system_setup" type="string" value="$(arg system_setup)" /> 
+            <param name="robot_name" type="string" value="$(arg robot_name)" /> 
+        <rosparam command="load" file="$(find common)/config/vehicles/$(arg robot_name)/config/car.yaml" />
+            <param name="track_name" type="string" value="$(arg track_name)" />	 
+                <!-- road percept, planning & ctrl nodes -->
+            <node pkg="perception" type="track_iface.py" name="track_iface"  />
+            <node pkg="perception" type="state_est_cart.py" name="state_est_cart"   > </node>
+            <node pkg="perception" type="state_est_frenet.py" name="state_est_frenet" /> 
+            <node pkg="perception" type="road_perception.py" name="road_perception"> </node> 
+            
+            <!-- <node type="rviz" name="rviz" pkg="rviz" args="-d $(find svea_core)/resources/rviz/SVEA_floor2.rviz" /> -->
+            
+                <!-- saarti nodes -->
+            <!-- <rosparam command="load" file="$(find saarti)/config/planning_and_ctrl_config.yaml" />  -->
+            <!-- <arg name="exp_config" default="asta_reduced_mu_turn_config.yaml"/> -->
+
+            <arg name="exp_config" default="SVEA_config.yaml"/>
+            <rosparam command="load" file="$(find common)/config/exp_config/$(arg exp_config)" />
+            <node pkg="saarti" type="saarti_node" name="saarti_node"/> 
+            <node pkg="saarti" type="ctrl_interface.py" name="ctrl_interface"/>
+            
+            <!-- experiment manager node -->
+            <!-- <node pkg="common" type="exp_manager.py" name="experiment_manager"  required="true"> </node> -->
+            <include file="$(find svea_core)/launch/exp_manager.launch" />
+
+            <!-- experiment logging -->
+
+            <!-- <include file="$(find svea_core)/launch/Exp_logging.launch" /> -->
+            <!-- <include file="$(find svea_core)/launch/Experiment_log_real.launch" /> -->
+
+ </launch>  
