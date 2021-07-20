@@ -12,11 +12,12 @@
     
     
 
-    <!-- <group if="$(eval is_sim == true)">
+    <group if="$(eval is_sim == true)">
         <node type="rviz" name="rviz" pkg="rviz" args="-d $(find svea_core)/resources/rviz/SVEA_floor2.rviz" />
-    </group> -->
+         <node pkg="map_server" type="map_server" name="map_server" output="screen" args="$(arg map_file)" />
+    </group>
 
-    <!-- <node pkg="map_server" type="map_server" name="map_server" output="screen" args="$(arg map_file)" /> -->
+
     <!-- <rosparam command="load" file="$(find svea_core)/resources/params/SVEA_track.yaml" /> -->
     <!-- <rosparam command="load" file="$(find svea_core)/resources/params/obstacles.yaml" /> -->
     <!-- <rosparam command="load" file="$(find svea_core)/resources/params/track.yaml" /> -->

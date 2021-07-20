@@ -9,10 +9,10 @@
         <rosparam command="load" file="$(find common)/config/vehicles/$(arg robot_name)/config/car.yaml" />
             <param name="track_name" type="string" value="$(arg track_name)" />	 
                 <!-- road percept, planning & ctrl nodes -->
-            <node pkg="perception" type="track_iface.py" name="track_iface"  />
+            <!-- <node pkg="perception" type="track_iface.py" name="track_iface"  />
             <node pkg="perception" type="state_est_cart.py" name="state_est_cart"   > </node>
             <node pkg="perception" type="state_est_frenet.py" name="state_est_frenet" /> 
-            <node pkg="perception" type="road_perception.py" name="road_perception"> </node> 
+            <node pkg="perception" type="road_perception.py" name="road_perception"> </node>  -->
             
             <!-- <node type="rviz" name="rviz" pkg="rviz" args="-d $(find svea_core)/resources/rviz/SVEA_floor2.rviz" /> -->
             
