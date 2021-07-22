@@ -65,6 +65,7 @@ class CtrlInterface:
         elif(self.system_setup == "SVEA" or self.system_setup == "SVEA"):
             from svea_msgs.msg import lli_ctrl
             from svea_msgs.msg import tamp_control
+            #import actuation 
             self.svea_pub = rospy.Publisher('/Control_signal',tamp_control , queue_size=1)
             #self.svea_pub = rospy.Publisher('/lli/ctrl_request', lli_ctrl, queue_size=1)
         
@@ -87,6 +88,18 @@ class CtrlInterface:
         # get dref setpoint
         self.cc_dref = rospy.get_param('/cc_dref')
         
+        # postproc tuning vars (TUNE LAT)
+        # self.delta_out_buffer_size = 2
+        # self.delta_out_buffer = np.zeros(self.delta_out_buffer_size)
+        # self.delta_out_ma_window_size = 1               # 5 20  1 deactivates        
+        # self.db_range = 0.0*(np.pi/180)                 # 0.0 deactivates
+        # self.delta_out_rate_max = 100 #0.25 # 30.0*(np.pi/180)       # 30 large value deactivates
+        
+        # # postproc acc
+        # self.db_range_acc = 0.05                        # 0.0 deactivates
+        # self.acc_out_buffer_size = 20
+        # self.acc_out_buffer = np.zeros(self.delta_out_buffer_size)
+        # self.acc_out_rate_max = 2       # large value deactivates
         
         # wait for messages before entering main loop
         while(not self.state_received):
@@ -120,12 +133,70 @@ class CtrlInterface:
             else:
                 rospy.logerr("ctrl_interface: invalid ctrl_mode! ctrl_mode = " + str(self.ctrl_mode))
     
+            # POST PROCESSING
+            # self.delta_out_buffer = np.roll(self.delta_out_buffer,1)
+            # if(not np.isnan(delta_out)):
+            #     self.delta_out_buffer[0] = delta_out
+            # else:
+            #     delta_out = self.delta_out_buffer[1]
+            #     self.delta_out_buffer[0] = delta_out
+            #     rospy.logerr("ctrl_interface: nans in delta computation")
+            # smoothing
+            # delta_out = np.mean(self.delta_out_buffer[0:self.delta_out_ma_window_size])
+            # # rate limit
+            # if(self.delta_out_buffer[0] > self.delta_out_buffer[1] + self.delta_out_rate_max*self.dt):
+            #     delta_out = self.delta_out_buffer[1] + self.delta_out_rate_max*self.dt
+            #     self.delta_out_buffer[0] = delta_out
+            # if(self.delta_out_buffer[0] < self.delta_out_buffer[1] - self.delta_out_rate_max*self.dt):
+            #     delta_out = self.delta_out_buffer[1] - self.delta_out_rate_max*self.dt
+            #     self.delta_out_buffer[0] = delta_out
+            # deadband
+            # if(-self.db_range < delta_out < self.db_range):
+            #     delta_out = 0
+    
             # zero if low speed
-            if(self.state.vx < 0.2):
+            if(self.state.vx < 0.0):
                 delta_out = 0
     
             # set platform specific cmd and publish
-            if(self.system_setup == "rhino_fssim" or self.system_setup == "gotthard_fssim"):
+            if(self.system_setup == "rhino_real"):
+                
+                # ACC
+                self.acc_out_buffer = np.roll(self.acc_out_buffer,1)
+                self.acc_out_buffer[0] = dc_out
+                
+                # acc rate limit
+                if(self.acc_out_buffer[0] > self.acc_out_buffer[1] + self.acc_out_rate_max*self.dt):
+                    dc_out = self.acc_out_buffer[1] + self.acc_out_rate_max*self.dt
+                    self.acc_out_buffer[0] = dc_out
+                if(self.acc_out_buffer[0] < self.acc_out_buffer[1] - self.acc_out_rate_max*self.dt):
+                    dc_out = self.acc_out_buffer[1] - self.acc_out_rate_max*self.dt
+                    self.acc_out_buffer[0] = dc_out
+                
+                
+                # map to throttle if pos acc
+                if(dc_out >= self.db_range_acc):        # accelerating
+                    self.cmd.acceleration = 40.0*dc_out # (TUNE LONG)
+                elif(dc_out < -self.db_range_acc):      # braking
+                    self.cmd.acceleration = 1.0*dc_out
+                else:                                   # deadband
+                    self.cmd.acceleration = 0.0
+ 
+    
+                # saturate output for safety
+                throttle_max = 50.0 # (TUNE LONG) (%) 
+                brake_max = -2.0  # (TUNE LONG) (m/s^2)
+                self.cmd.acceleration = float(np.clip(self.cmd.acceleration, a_min = brake_max, a_max = throttle_max))
+                
+                if(self.cmd.acceleration == throttle_max or self.cmd.acceleration == brake_max):
+                    rospy.logwarn_throttle(1,"saturated logitudinal command in tamp_ctrl, self.cmd.acceleration = " + str(self.cmd.acceleration))
+  
+                # set steering and stamp
+                self.cmd.steering = delta_out  
+                self.cmd.header.stamp = rospy.Time.now()
+
+             
+            elif(self.system_setup == "rhino_fssim" or self.system_setup == "gotthard_fssim"):
                 self.cmd.delta = delta_out
                 self.cmd.dc = dc_out
             
@@ -137,7 +208,6 @@ class CtrlInterface:
 
                 self.rate.sleep()
             elif(self.system_setup == "SVEA"):
-            
                 self.tamp_control.steering = delta_out
                 if dc_out < 0.0:
                     dc_out = 0.0

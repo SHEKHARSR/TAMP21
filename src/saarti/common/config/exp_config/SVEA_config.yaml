@@ -35,7 +35,7 @@ mu_segment_values:  [0.6, 0.6, 0.6]
 s_begin_vxref_segments: [0.0, 11.0, 25.0]
 #s_begin_vxref_segments: [0.0]
 #vxref_segment_values: [10.0,30.0,25.1]
-vxref_segment_values: [1.5,1.5,1.5]
+vxref_segment_values: [2.5,2.5,2.5]
 
 # low friction run (asta_zero_short)
 #s_begin_mu_segments:  [0.0, 235.0, 295.0]
