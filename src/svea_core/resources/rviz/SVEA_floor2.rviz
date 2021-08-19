@@ -357,7 +357,7 @@ Visualization Manager:
       Marker Topic: /lhpt_vis
       Name: lhpt(look aheah point)
       Namespaces:
-        "": true
+        {}
       Queue Size: 100
       Value: true
     - Class: rviz/Marker
@@ -380,7 +380,7 @@ Visualization Manager:
       Marker Topic: /state_text_marker
       Name: Marker
       Namespaces:
-        "": true
+        {}
       Queue Size: 100
       Value: true
   Enabled: true
@@ -426,10 +426,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.174797534942627
+      Pitch: 0.45479756593704224
       Target Frame: map
       Value: Orbit (rviz)
-      Yaw: 3.407824993133545
+      Yaw: 3.2478251457214355
     Saved:
       - Class: rviz/Orbit
         Distance: 28.243106842041016

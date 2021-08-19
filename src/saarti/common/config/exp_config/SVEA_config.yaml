@@ -2,7 +2,7 @@
 
 t_activate: 5.0
 t_final: 500.0
-scenario_id: 6 # 1: pop-up, 2: reduced mu turn, 3: racing 4: local min test 5: pp-test 6: tamp test
+scenario_id: 3 # 1: pop-up, 2: reduced mu turn, 3: racing 4: local min test 5: pp-test 6: tamp test
 
 # pop-up obstacle config
 obstacle_config: no_popup
@@ -29,13 +29,15 @@ obstacle_wiggleroom: 1.0
 #s_begin_vxref_segments: [0.0, 315.0, 600.0]
 #vxref_segment_values: [15.0, 10.0, 5.0]
 
-# low friction run (asta_zero_long)
+##################################################################################################
+# SVEA 
 s_begin_mu_segments:  [0.0, 11.0, 25.0]
 mu_segment_values:  [0.6, 0.6, 0.6] 
 s_begin_vxref_segments: [0.0, 11.0, 25.0]
 #s_begin_vxref_segments: [0.0]
-#vxref_segment_values: [10.0,30.0,25.1]
-vxref_segment_values: [2.5,2.5,2.5]
+vxref_segment_values: [2.9,2.9,2.9]
+##################################################################################################
+
 
 # low friction run (asta_zero_short)
 #s_begin_mu_segments:  [0.0, 235.0, 295.0]
@@ -96,8 +98,8 @@ conservativeness_level: -1
 #Fr_util: 0.8
 #Ff_util: 0.5 # initial tuning runs
 #Fr_util: 0.5
-Ff_util: 0.9 # sim
-Fr_util: 0.9
+Ff_util: 0.5 # sim
+Fr_util: 0.5
 # optimization config
 Wx:  [1.0, 50000.0, 0.1, 0.1, 50.0, 0.0001]
 WNx: [10.0, 500000.0, 1.0, 1.0, 500.0, 0.001]

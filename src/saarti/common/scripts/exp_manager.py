@@ -35,11 +35,8 @@ from svea.controllers.tamp_control import TAMPController
 from svea.states import VehicleState
 from svea.localizers import LocalizationInterface
 from svea.data import BasicDataHandler, TrajDataHandler, RVIZPathHandler
-from svea.models.bicycle import SimpleBicycleModel
-from svea.simulators.sim_SVEA_copy import SimSVEA
 from svea_msgs.msg import lli_ctrl
-from svea_msgs.msg import lli_emergency
-from svea_msgs.msg import tamp_control as tc
+from svea_msgs.msg import tamp_control 
 ### ::::::SVEA:::::
 
 class ExperimentManager:
@@ -89,6 +86,11 @@ class ExperimentManager:
         if(self.system_setup == "rhino_real"):
             self.ctrl_sub = rospy.Subscriber("/OpenDLV/ActuationRequest", ActuationRequest, self.odlv_cmd_callback)
             self.cmd_msg = ActuationRequest()
+        elif(self.system_setup == "SVEA" or self.system_setup == "SVEA"):
+            from svea_msgs.msg import tamp_control
+            self.control_inputs_to_svea_sub = rospy.Subscriber("/Control_signal", tamp_control, self.callback_ctrl_from_tamp)
+        self.tamp_control = tamp_control()
+        self.received_tamp_control = False
         # init misc internal variables
         self.pathglobal = Path()
         self.received_pathglobal = False
@@ -272,6 +274,9 @@ class ExperimentManager:
                 elif(self.system_setup == "rhino_fssim"):
                     delta = self.cmd_msg.delta
                     acc = self.cmd_msg.dc   
+                elif(self.system_setup == "SVEA"):
+                    delta = self.tamp_control.steering
+                    acc = 50
                 else:
                     delta = 0
                     acc = 0                     
@@ -281,7 +286,7 @@ class ExperimentManager:
                              "mu:    " + "%.3f" % mu + "\n"  \
                              "vxref: " + "%.3f" % self.vxref.data + "\n"  \
                              "vx:    " + "%.3f" % self.state.vx + "\n"  \
-                             "steer: " + "%.3f" % delta + "\n"  \
+                             "steer: " + "%.6f" % delta + "\n"  \
                              "acc:   " + "%.3f" % acc 
                 m = self.gettextmarker(state_text)
                 m.header.stamp = rospy.Time.now()
@@ -394,6 +399,11 @@ class ExperimentManager:
         self.Fyf_vis_pub.publish(self.getForceArrowMarker(np.pi/2., 2.0*msg.Fy_f/1000.,0))
         self.Fyr_vis_pub.publish(self.getForceArrowMarker(np.pi/2., 2.0*msg.Fy_r/1000.,3.4))
         self.Fx_vis_pub.publish(self.getForceArrowMarker(0, msg.Fx/1000.,1.2))
+    #####SVEA
+    def callback_ctrl_from_tamp(self,msg):
+        self.recieved_steering = msg.steering
+        self.recieved_velocity = msg.velocity
+        self.received_tamp_control = True
         
     def getForceArrowMarker(self,orientation,magnitude,rearward_shift):
         m = Marker()

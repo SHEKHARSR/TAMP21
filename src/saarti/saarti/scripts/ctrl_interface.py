@@ -202,10 +202,10 @@ class CtrlInterface:
             Cm1 = 5000            
             dc_out = ((feedfwd+feedback)+Cr0)/Cm1 
         elif(self.system_setup == "SVEA"):
-            dc_out = self.trajstar.vx[5]
-
-            
-
+            dc_out = 1.1*self.trajstar.vx[10] #TODO SETUP Tunning case for svea
+            #feedfwd = 4.5*Fx_request/self.m
+            #feedback = 5.5*self.vx_error # Not really effective 
+            #sdc_out = feedfwd + feedback
         else:
             dc_out = 0
             rospy.logerr("ctrl_interface: invalid value of system_setup param, system_setup = " + self.system_setup)        
