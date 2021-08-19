@@ -349,9 +349,9 @@ class StateEstCart:
             self.Fx_vis_pub.publish(self.getForceArrowMarker(0, (Fxf_est+Fxr_est)/1000.,1.2))
             """
             # broadcast tf
-            start_tfbc = time.time()
-            self.broadcast_dyn_tfs()
-            self.broadcast_static_tfs()
+            start_tfbc = time.time()s
+            #self.broadcast_dyn_tfs()
+            #self.broadcast_static_tfs()
             end_tfbc = time.time()
             comptime_tfbc = end_tfbc-start_tfbc
 
